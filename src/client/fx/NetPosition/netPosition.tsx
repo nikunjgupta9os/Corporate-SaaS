@@ -1,0 +1,532 @@
+import React, { useEffect, useState, useMemo } from "react";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
+import { Download, Trash2 } from "lucide-react";
+import Layout from "../../common/Layout";
+import "../../styles/theme.css";
+import MaturityTable from "./MaturityTable";
+import LoadingSpinner from "../../ui/LoadingSpinner";
+import { formatCurrency } from "./MaturityTable";
+import DetailedViews from "./DetailedViews.tsx";
+
+export interface NetExposureCurrency {
+  bu: string;
+  maturity: string;
+  currency: string;
+  payable: number;
+  receivable: number;
+  forwardBuy: number;
+  forwardSell: number;
+}
+
+interface ApiExposureData {
+  bu: string;
+  maturity: string;
+  currency: string;
+  payable: number;
+  receivable: number;
+}
+
+interface ApiForwardData {
+  bu: string;
+  maturity: string;
+  currency: string;
+  forwardBuy: number;
+  forwardSell: number;
+}
+
+const hardcodedForwardData: ApiForwardData[] = [
+  {
+    bu: "Dept 3",
+    maturity: "6 Month +",
+    currency: "USD",
+    forwardBuy: 0,
+    forwardSell: 65000,
+  },
+  // ... rest of the hardcoded data from your example
+  {
+    bu: "Branch B",
+    maturity: "6 Month +",
+    currency: "USD",
+    forwardBuy: 0,
+    forwardSell: 120000,
+  },
+];
+
+const MATURITY_ORDER: Record<string, number> = {
+  "1 Month": 1,
+  "2 Month": 2,
+  "3 Month": 3,
+  "4-6 Month": 4,
+  "6 Month +": 5,
+};
+
+async function fetchExposureData(): Promise<ApiExposureData[]> {
+  return [
+    {
+      bu: "Dept 1",
+      maturity: "1 Month",
+      currency: "USD",
+      payable: 10000,
+      receivable: 15000,
+    },
+    {
+      bu: "Dept 2",
+      maturity: "2 Month",
+      currency: "EUR",
+      payable: 20000,
+      receivable: 25000,
+    },
+    {
+      bu: "Branch B",
+      maturity: "6 Month +",
+      currency: "USD",
+      payable: 20000,
+      receivable: 25000,
+    },
+    // Add more mock data as needed
+  ];
+}
+
+const NetExposure: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [exposureData, setExposureData] = useState<ApiExposureData[]>([]);
+  const [forwardData] = useState<ApiForwardData[]>(hardcodedForwardData);
+  const [selectedBU, setSelectedBU] = useState<string>("All");
+  const [expandedMap, setExpandedMap] = useState<Record<string, boolean>>({});
+
+  // Merge exposure and forward data
+  const mergedData = useMemo<NetExposureCurrency[]>(() => {
+    const result: NetExposureCurrency[] = [];
+
+    // Process exposure data
+    exposureData.forEach((expItem) => {
+      // Find matching forward data
+      const forwardItem = forwardData.find(
+        (fwd) =>
+          fwd.bu === expItem.bu &&
+          fwd.maturity === expItem.maturity &&
+          fwd.currency === expItem.currency
+      );
+
+      result.push({
+        bu: expItem.bu,
+        maturity: expItem.maturity,
+        currency: expItem.currency,
+        payable: expItem.payable,
+        receivable: expItem.receivable,
+        forwardBuy: forwardItem?.forwardBuy || 0,
+        forwardSell: forwardItem?.forwardSell || 0,
+      });
+    });
+
+    // Add forward data that doesn't have exposure entries
+    forwardData.forEach((fwdItem) => {
+      const exists = exposureData.some(
+        (exp) =>
+          exp.bu === fwdItem.bu &&
+          exp.maturity === fwdItem.maturity &&
+          exp.currency === fwdItem.currency
+      );
+
+      if (!exists) {
+        result.push({
+          bu: fwdItem.bu,
+          maturity: fwdItem.maturity,
+          currency: fwdItem.currency,
+          payable: 0,
+          receivable: 0,
+          forwardBuy: fwdItem.forwardBuy,
+          forwardSell: fwdItem.forwardSell,
+        });
+      }
+    });
+
+    return result;
+  }, [exposureData, forwardData]);
+
+  // Filter data by selected BU
+  const filteredData = useMemo(() => {
+    if (selectedBU === "All") return mergedData;
+    return mergedData.filter((item) => item.bu === selectedBU);
+  }, [mergedData, selectedBU]);
+
+  // Get unique BUs for dropdown
+  const buOptions = useMemo(() => {
+    const bus = new Set(mergedData.map((item) => item.bu));
+    return ["All", ...Array.from(bus)].sort();
+  }, [mergedData]);
+
+  // Group data by BU and Maturity (sorted)
+  const groupedDataByBUAndMaturity = useMemo(() => {
+    const result: Record<string, Record<string, NetExposureCurrency[]>> = {};
+
+    filteredData.forEach((row) => {
+      if (!result[row.bu]) result[row.bu] = {};
+      if (!result[row.bu][row.maturity]) result[row.bu][row.maturity] = [];
+      result[row.bu][row.maturity].push(row);
+    });
+
+    // Sort maturities within each BU
+    Object.keys(result).forEach((bu) => {
+      const maturityGroups = result[bu];
+      const sortedMaturities = Object.keys(maturityGroups).sort(
+        (a, b) => (MATURITY_ORDER[a] || 999) - (MATURITY_ORDER[b] || 999)
+      );
+
+      const sortedGroup: Record<string, NetExposureCurrency[]> = {};
+      sortedMaturities.forEach((maturity) => {
+        sortedGroup[maturity] = maturityGroups[maturity];
+      });
+
+      result[bu] = sortedGroup;
+    });
+
+    return result;
+  }, [filteredData]);
+
+  // Initialize expanded state
+  useEffect(() => {
+    if (filteredData.length > 0) {
+      const newExpandedMap: Record<string, boolean> = {};
+      Object.entries(groupedDataByBUAndMaturity).forEach(
+        ([bu, maturityGroup]) => {
+          Object.keys(maturityGroup).forEach((maturity) => {
+            newExpandedMap[`${bu}-${maturity}`] = true;
+          });
+        }
+      );
+      setExpandedMap(newExpandedMap);
+      setIsLoading(false);
+    }
+  }, [filteredData, groupedDataByBUAndMaturity]);
+
+  // Fetch data on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const data = await fetchExposureData();
+        setExposureData(data);
+      } catch (error) {
+         console.error("Error fetching exposure data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const toggleExpand = (key: string) => {
+    setExpandedMap((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // Get unique maturities for summary tables (sorted)
+  const maturityList = useMemo(() => {
+    const maturities = new Set(filteredData.map((item) => item.maturity));
+    return Array.from(maturities).sort(
+      (a, b) => (MATURITY_ORDER[a] || 999) - (MATURITY_ORDER[b] || 999)
+    );
+  }, [filteredData]);
+
+  // Exposure summary
+  const exposureByMaturity = useMemo(() => {
+    return maturityList.map((mat) => {
+      const filtered = filteredData.filter((d) => d.maturity === mat);
+      const payable = filtered.reduce((acc, r) => acc + r.payable, 0);
+      const receivable = filtered.reduce((acc, r) => acc + r.receivable, 0);
+      return { maturity: mat, payable, receivable };
+    });
+  }, [maturityList, filteredData]);
+
+  // Forward summary
+  const forwardByMaturity = useMemo(() => {
+    return maturityList.map((mat) => {
+      const filtered = filteredData.filter((d) => d.maturity === mat);
+      const forwardBuy = filtered.reduce((acc, r) => acc + r.forwardBuy, 0);
+      const forwardSell = filtered.reduce((acc, r) => acc + r.forwardSell, 0);
+      return { maturity: mat, forwardBuy, forwardSell };
+    });
+  }, [maturityList, filteredData]);
+
+  // Grand totals
+  const grandTotals = useMemo(() => {
+    return filteredData.reduce(
+      (acc, row) => {
+        acc.payable += row.payable;
+        acc.receivable += row.receivable;
+        acc.forwardBuy += row.forwardBuy;
+        acc.forwardSell += row.forwardSell;
+        return acc;
+      },
+      { payable: 0, receivable: 0, forwardBuy: 0, forwardSell: 0 }
+    );
+  }, [filteredData]);
+
+  const netExp = grandTotals.receivable - grandTotals.payable;
+  const netFwd = grandTotals.forwardBuy - grandTotals.forwardSell;
+  const diff = netExp - netFwd;
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  return (
+    <>
+      <Layout title="Net Exposure Dashboard">
+        <div className="p-4 max-w-full mx-auto">
+          <h2 className="text-2xl text-secondary-text font-semibold text-center mb-6">
+            Net Position Analysis: Exposure, Forwards, and Net Exposure by
+            Currency and Maturity
+          </h2>
+
+          {/* BU Filter Dropdown */}
+          <div className="mb-4">
+            <label htmlFor="bu-filter" className="mr-2 text-secondary-text">
+              Filter by Business Unit:
+            </label>
+            <select
+              id="bu-filter"
+              value={selectedBU}
+              onChange={(e) => setSelectedBU(e.target.value)}
+              className="px-3 py-1 bg-secondary-color text-secondary-text border border-border rounded"
+            >
+              {buOptions.map((bu) => (
+                <option key={bu} value={bu}>
+                  {bu}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Main tables */}
+          {Object.entries(groupedDataByBUAndMaturity).map(
+            ([bu, maturityGroup]) => (
+              <div key={bu}>
+                {Object.entries(maturityGroup).map(([maturity, rows]) => {
+                  const key = `${bu}-${maturity}`;
+                  return (
+                    <MaturityTable
+                      key={key}
+                      maturity={`Maturity : ${maturity}`}
+                      rows={rows}
+                      expanded={expandedMap[key] || false}
+                      toggleExpand={() => toggleExpand(key)}
+                    />
+                  );
+                })}
+              </div>
+            )
+          )}
+
+          {/* Grand totals table */}
+          <div className="mb-6 overflow-x-auto">
+            <table className="min-w-full mt-8 text-sm text-center">
+              <thead className="font-semibold">
+                <tr>
+                  <th className="px-4 text-secondary-text py-2 border border-border">
+                    Grand Total (All Months)
+                  </th>
+                  <th className="px-4 text-secondary-text py-2 border border-border">
+                    Payable
+                  </th>
+                  <th className="px-4 text-secondary-text py-2 border border-border">
+                    Receivable
+                  </th>
+                  <th className="px-4 text-secondary-text py-2 border border-border">
+                    Net (R - P)
+                  </th>
+                  <th className="px-4 text-secondary-text py-2 border border-border">
+                    Forward Buy
+                  </th>
+                  <th className="px-4 text-secondary-text py-2 border border-border">
+                    Forward Sell
+                  </th>
+                  <th className="px-4 text-secondary-text py-2 border border-border">
+                    Net (B - S)
+                  </th>
+                  <th className="px-4 text-secondary-text py-2 border border-border">
+                    Diff (Net Exp - Net Fwd)
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="px-4 py-2 border bg-secondary-color-lt font-semibold text-secondary-text border-border">
+                    Grand Total
+                  </td>
+                  <td className="px-4 py-2 border bg-secondary-color-lt text-secondary-text border-border">
+                    {formatCurrency(grandTotals.payable)}
+                  </td>
+                  <td className="px-4 py-2 border bg-secondary-color-lt text-secondary-text border-border">
+                    {formatCurrency(grandTotals.receivable)}
+                  </td>
+                  <td className="px-4 py-2 border bg-secondary-color-lt text-secondary-text border-border">
+                    {formatCurrency(netExp)}
+                  </td>
+                  <td className="px-4 py-2 border bg-secondary-color-lt text-secondary-text border-border">
+                    {formatCurrency(grandTotals.forwardBuy)}
+                  </td>
+                  <td className="px-4 py-2 border bg-secondary-color-lt text-secondary-text border-border">
+                    {formatCurrency(grandTotals.forwardSell)}
+                  </td>
+                  <td className="px-4 py-2 border bg-secondary-color-lt text-secondary-text border-border">
+                    {formatCurrency(netFwd)}
+                  </td>
+                  <td
+                    className={`px-4 py-2 border bg-secondary-color-lt font-bold border-border ${
+                      diff > 0
+                        ? "text-green-600"
+                        : diff < 0
+                        ? "text-red-600"
+                        : ""
+                    }`}
+                  >
+                    {formatCurrency(diff)}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Summary tables */}
+          <div className="grid grid-cols-1 md:grid-cols-2 mt-10 gap-4 mb-8">
+            <div className="border border-border shadow rounded p-2">
+              <h3 className="text-lg py-2 tracking-wider font-semibold text-center text-primary mb-2">
+                Exposure : Payable vs. Receivable by Maturity
+              </h3>
+              <table className="min-w-full text-center text-secondary-text text-sm bg-primary-xl">
+                <thead>
+                  <tr>
+                    <th className="px-2 py-1 border border-border text-secondary-text bg-primary-lg">
+                      Type
+                    </th>
+                    {exposureByMaturity.map((row) => (
+                      <th
+                        key={row.maturity}
+                        className="px-2 py-1 border text-secondary-text border-border bg-primary-lg"
+                      >
+                        {row.maturity}
+                      </th>
+                    ))}
+                    <th className="px-2 py-1 border border-border bg-primary-lg">
+                      Total
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {["Payable", "Receivable"].map((type) => (
+                    <tr key={type}>
+                      <td className="px-2 py-1 border border-border">{type}</td>
+                      {exposureByMaturity.map((row) => (
+                        <td
+                          key={`${type}-${row.maturity}`}
+                          className="px-2 py-1 border border-border"
+                        >
+                          {formatCurrency(
+                            type === "Payable" ? row.payable : row.receivable
+                          )}
+                        </td>
+                      ))}
+                      <td className="px-2 py-1 border font-semibold border-border">
+                        {formatCurrency(
+                          type === "Payable"
+                            ? grandTotals.payable
+                            : grandTotals.receivable
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                  <tr className="font-semibold bg-primary-lg">
+                    <td className="px-2 py-1 border border-border">Total</td>
+                    {exposureByMaturity.map((row) => (
+                      <td
+                        key={`total-${row.maturity}`}
+                        className="px-2 py-1 border border-border"
+                      >
+                        {formatCurrency(row.payable + row.receivable)}
+                      </td>
+                    ))}
+                    <td className="px-2 py-1 border font-bold border-border ">
+                      {formatCurrency(
+                        grandTotals.payable + grandTotals.receivable
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="border shadow border-border p-2">
+              <h3 className="text-lg py-2 tracking-wider font-semibold text-center text-primary mb-2">
+                Forwards : Buy vs. Sell by Maturity
+              </h3>
+              <table className="min-w-full text-center text-secondary-text text-sm bg-primary-xl">
+                <thead>
+                  <tr>
+                    <th className="px-2 py-1 border border-border text-secondary-text bg-primary-lg">
+                      Type
+                    </th>
+                    {forwardByMaturity.map((row) => (
+                      <th
+                        key={row.maturity}
+                        className="px-2 py-1 border text-secondary-text border-border bg-primary-lg"
+                      >
+                        {row.maturity}
+                      </th>
+                    ))}
+                    <th className="px-2 py-1 border border-border bg-primary-lg">
+                      Total
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {["Buy", "Sell"].map((type) => (
+                    <tr key={type}>
+                      <td className="px-2 py-1 border border-border">{type}</td>
+                      {forwardByMaturity.map((row) => (
+                        <td
+                          key={`${type}-${row.maturity}`}
+                          className="px-2 py-1 border border-border"
+                        >
+                          {formatCurrency(
+                            type === "Buy" ? row.forwardBuy : row.forwardSell
+                          )}
+                        </td>
+                      ))}
+                      <td className="px-2 py-1 border font-semibold border-border">
+                        {formatCurrency(
+                          type === "Buy"
+                            ? grandTotals.forwardBuy
+                            : grandTotals.forwardSell
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                  <tr className="font-semibold bg-primary-lg">
+                    <td className="px-2 py-1 border border-border">Total</td>
+                    {forwardByMaturity.map((row) => (
+                      <td
+                        key={`total-${row.maturity}`}
+                        className="px-2 py-1 border border-border"
+                      >
+                        {formatCurrency(row.forwardBuy + row.forwardSell)}
+                      </td>
+                    ))}
+                    <td className="px-2 py-1 border font-bold border-border">
+                      {formatCurrency(
+                        grandTotals.forwardBuy + grandTotals.forwardSell
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <DetailedViews />
+        </div>
+      </Layout>
+    </>
+  );
+};
+
+export default NetExposure;
