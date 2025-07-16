@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { type Table } from "@tanstack/react-table";
 
@@ -9,11 +9,11 @@ interface PaginationFooterProps<T> {
 const PaginationFooter = <T,>({ table }: PaginationFooterProps<T>) => {
   const pagination = table.getState().pagination;
   const totalRows = table.getCoreRowModel().rows.length;
-  const firstItem = pagination.pageIndex * pagination.pageSize + 1;
-  const lastItem = Math.min(
-    (pagination.pageIndex + 1) * pagination.pageSize,
-    totalRows
-  );
+  // const firstItem = pagination.pageIndex * pagination.pageSize + 1;
+  // const lastItem = Math.min(
+  //   (pagination.pageIndex + 1) * pagination.pageSize,
+  //   totalRows
+  // );
   const pageSize = pagination.pageSize;
   const currentPage = pagination.pageIndex;
   const totalPages = Math.ceil(totalRows / pageSize);

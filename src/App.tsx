@@ -8,11 +8,11 @@ import Roles from "./client/uam/Roles/index";
 import RoleCreation from "./client/uam/Roles/RoleCreationForm";
 import Permission from "./client/uam/Permission/index";
 import ForgotPassword from "./client/common/ForgotPassword";
-import MastersPage from "./client/common/Masters/Masters";
-import ExposureBucketing from "./client/fx/exposureBucketing.tsx/index.tsx";
+// import MastersPage from "./client/common/Masters/Masters";
+// import ExposureBucketing from "./client/fx/exposureBucketing.tsx/index.tsx";
 import ExposureUpload from "./client/fx/exposureUpload.tsx/index.tsx";
 import Hedgingproposal from "./client/fx/hedgingproposal/index.tsx";
-import ProtectedRoute from "./ProtectedRoute";
+// import  from "./";
 import Entity from "./client/entity/EntityCreation";
 import Hierarchical from "./client/entity/entityHiearchy";
 import PreloaderAnimation from "./client/common/Preloader";
@@ -36,117 +36,118 @@ function App() {
             {/* <Route path="/pp" element={<AllUsers />} />
             <Route path="/k" element={<K />} /> */}
             {/* Protected Routes */}
-            <Route
+            {/* <Route
               path="/masters"
               element={
-                <ProtectedRoute>
+                <>
                   <MastersPage />
-                </ProtectedRoute>
+                </>
               }
-            />
-            <Route
-              path="/cfo-dashboard"
-              element={
-                <ProtectedRoute>
-                  <CFODashboard />
-                </ProtectedRoute>
-              }
-            />
+            /> */}
+            
             <Route
               path="/hedging-dashboard"
               element={
-                <ProtectedRoute>
+                <>
                   <NetExposure />
-                </ProtectedRoute>
+                </>
               }
             />
             <Route
               path="/fxbooking"
               element={
-                <ProtectedRoute>
+                <>
                   <FXForwardBookingForm />
-                </ProtectedRoute>
+                </>
               }
             />
             <Route
               path="/ops-dashboard"
               element={
-                <ProtectedRoute>
+                <>
                   <OPSDashboard />
-                </ProtectedRoute>
+                </>
+              }
+            />
+            <Route
+              path="/cfo-dashboard"
+              element={
+                <>
+                  <CFODashboard />
+                </>
               }
             />
             <Route
               path="/user"
               element={
-                <ProtectedRoute>
+                <>
                   <Users />
-                </ProtectedRoute>
+                </>
               }
             />
             <Route
               path="/user/create"
               element={
-                <ProtectedRoute>
+                <>
                   <UserCreationForm />
-                </ProtectedRoute>
+                </>
               }
             />
             <Route
               path="/role"
               element={
-                <ProtectedRoute>
+                <>
                   <Roles />
-                </ProtectedRoute>
+                </>
               }
             />
             <Route
               path="/entity"
               element={
-                <ProtectedRoute>
+                <>
                   <Entity />
-                </ProtectedRoute>
+                </>
               }
             />
             <Route
               path="/hierarchical"
               element={
-                <ProtectedRoute>
+                <>
                   <Hierarchical />
-                </ProtectedRoute>
+                </>
               }
             />
             <Route
               path="/role/create"
               element={
-                <ProtectedRoute>
+                <>
                   <RoleCreation />
-                </ProtectedRoute>
+                </>
               }
             />
             <Route
               path="/permission"
               element={
-                <ProtectedRoute>
+                <>
                   <Permission />
-                </ProtectedRoute>
+                </>
               }
             />
             <Route
               path="/exposure-upload"
               element={
-                <ProtectedRoute>
+                <>
                   <ExposureUpload />
-                </ProtectedRoute>
+                </>
               }
             />
-            <Route path="/exposure-bucketing" element={<ExposureBucketing />} />
+            {/* <Route path="/exposure-bucketing" element={<ExposureBucketing />} /> */}
             <Route
               path="/hedging-proposal"
               element={
-                <ProtectedRoute>
+                <>
                   <Hedgingproposal />
-                </ProtectedRoute>
+                </>
               }
             />
           </Routes>

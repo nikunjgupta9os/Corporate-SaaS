@@ -1,10 +1,9 @@
 import {
-  Filter,
-  RotateCcw,
+  // Filter,
+  // RotateCcw,
   ChevronDown,
   ChevronUp,
   Download,
-  Upload,
 } from "lucide-react";
 import LoadingSpinner from "../../ui/LoadingSpinner";
 import { exportToExcel } from "../../ui/exportToExcel";
@@ -55,7 +54,7 @@ const Awaitinguser: React.FC = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [editingRows, setEditingRows] = useState<Set<string>>(new Set());
-  const [showSelected, setShowSelected] = useState<boolean>(true);
+  // const [showSelected, setShowSelected] = useState<boolean>(true);
   const [data, setData] = useState<UserType[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -112,7 +111,7 @@ const Awaitinguser: React.FC = () => {
         if (response.data.success) {
           setLoading(false);
           const transformedUsers: UserType[] = response.data.users.map(
-            (user: any) => ({
+            (user) => ({
               id: user.id,
               authenticationType: user.authentication_type,
               employeeName: user.employee_name,
@@ -163,7 +162,7 @@ const Awaitinguser: React.FC = () => {
 
     return data.filter((user) => {
       return Object.entries(user)
-        .flatMap(([key, value]) => {
+        .flatMap(([value]) => {
           if (typeof value === "object" && value !== null) {
             // Handle nested object (e.g., role.name)
             return Object.values(value);
@@ -200,7 +199,7 @@ const Awaitinguser: React.FC = () => {
           )
         );
       })
-      .catch((error) => {
+      .catch(() => {
         //  console.error("Bulk user reject error:", error);
         // alert("Failed to reject selected users.");
         notify("Failed to reject selected users.", "error");
@@ -237,7 +236,7 @@ const Awaitinguser: React.FC = () => {
             )
         );
       })
-      .catch((error) => {
+      .catch(() => {
         //  console.error("Bulk user approve error:", error);
         // alert("Failed to approve selected users.");
         notify("Failed to approve selected users.", "error");
@@ -246,6 +245,29 @@ const Awaitinguser: React.FC = () => {
 
   const columns = useMemo<ColumnDef<UserType>[]>(() => {
     const baseColumns: ColumnDef<UserType>[] = [
+      {
+        id: "select",
+        header: ({ table }) => (
+          <div className="flex items-center justify-start">
+            <input
+              type="checkbox"
+              checked={table.getIsAllPageRowsSelected()}
+              onChange={table.getToggleAllPageRowsSelectedHandler()}
+              className="accent-primary w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+            />
+          </div>
+        ),
+        cell: ({ row }) => (
+          <div className="flex items-center justify-start">
+            <input
+              type="checkbox"
+              checked={row.getIsSelected()}
+              onChange={row.getToggleSelectedHandler()}
+              className="accent-primary w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+            />
+          </div>
+        ),
+      },
       {
         accessorKey: "srNo",
         header: "Sr No",
@@ -469,34 +491,11 @@ const Awaitinguser: React.FC = () => {
       },
     ];
 
-    if (showSelected) {
-      baseColumns.unshift({
-        id: "select",
-        header: ({ table }) => (
-          <div className="flex items-center justify-start">
-            <input
-              type="checkbox"
-              checked={table.getIsAllPageRowsSelected()}
-              onChange={table.getToggleAllPageRowsSelectedHandler()}
-              className="accent-primary w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
-            />
-          </div>
-        ),
-        cell: ({ row }) => (
-          <div className="flex items-center justify-start">
-            <input
-              type="checkbox"
-              checked={row.getIsSelected()}
-              onChange={row.getToggleSelectedHandler()}
-              className="accent-primary w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
-            />
-          </div>
-        ),
-      });
-    }
+    
+    
 
     return baseColumns;
-  }, [expandedRows, showSelected, toggleRowExpansion, data]);
+  }, [expandedRows, toggleRowExpansion, data]);
 
   const defaultVisibility: Record<string, boolean> = {
     srNo: true,

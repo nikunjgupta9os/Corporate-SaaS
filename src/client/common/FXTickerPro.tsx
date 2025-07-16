@@ -23,7 +23,7 @@ const FXTickerCompact = () => {
 
   const rowCount = 2;
   const rowSize = 5; // 5 currencies per row for better display
-
+  const API_KEY = "7e7d6d0df8d84cd09c21218e46c6f3ab";
   const fetchRates = async () => {
     try {
       const res = await fetch(

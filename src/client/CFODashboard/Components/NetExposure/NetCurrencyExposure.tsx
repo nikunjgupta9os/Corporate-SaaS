@@ -78,7 +78,7 @@ const CurrencyExposure = () => {
         <div className="max-h-[366px] overflow-y-auto">
           <div 
           className="space-y-3">
-            {currencyData.map((currency, index) => (
+            {currencyData.map((currency, _) => (
               <div key={currency.currency} className="bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10">
                 {/* Currency Header */}
                 <div className="flex justify-between items-center mb-1">

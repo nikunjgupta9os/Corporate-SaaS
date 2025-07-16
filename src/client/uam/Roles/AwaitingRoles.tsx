@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronUp, Download } from "lucide-react";
 import PaginationFooter from "../../ui/PaginationFooter";
-// import LoadingSpinner from '../../ui/LoadingSpinner';
+import LoadingSpinner from '../../ui/LoadingSpinner';
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { useNotification } from "../../Notification/Notification";
@@ -19,7 +19,7 @@ import { Droppable } from "../../common/Droppable";
 import ExpandedRow from "../../common/RenderExpandedCell";
 import Button from "../../ui/Button";
 import { exportToExcel } from "../../ui/exportToExcel";
-import LoadingSpinner from "../../ui/LoadingSpinner";
+// import LoadingSpinner from "../../ui/LoadingSpinner";
 import {useCallback} from 'react';
 
 const roleFieldLabels: Record<string, string> = {
@@ -36,6 +36,17 @@ const roleFieldLabels: Record<string, string> = {
   // approveddate: "Approved Date",
 };
 
+type BackendResponse = {
+  showCreateButton?: boolean;
+  showEditButton?: boolean;
+  showDeleteButton?: boolean;
+  showApproveButton?: boolean;
+  showRejectButton?: boolean;
+  roleData?: Role[];
+};
+
+
+
 const AwaitingApproval: React.FC = () => {
   // const [data] = useState<UserType[]>(sampleUsers);
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
@@ -47,15 +58,16 @@ const AwaitingApproval: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [editingRows, setEditingRows] = useState<Set<string>>(new Set());
-  const [showSelected, setShowSelected] = useState<boolean>(true);
+  // const [showSelected, setShowSelected] = useState<boolean>(true);
   const [data, setData] = useState<Role[]>([]);
-  const [actionVisibility, setActionVisibility] = useState({
-    showCreateButton: false,
-    showEditButton: false,
-    showDeleteButton: false,
-    showApproveButton: false,
-    showRejectButton: false,
-  });
+  
+  // const [actionVisibility, setActionVisibility] = useState({
+  //   showCreateButton: false,
+  //   showEditButton: false,
+  //   showDeleteButton: false,
+  //   showApproveButton: false,
+  //   showRejectButton: false,
+  // });
   type TabVisibility = {
     // add:boolean,
     // edit:boolean,
@@ -111,24 +123,24 @@ const AwaitingApproval: React.FC = () => {
           return;
         }
 
-        const {
-          showCreateButton,
-          showEditButton,
-          showDeleteButton,
-          showApproveButton,
-          showRejectButton,
-          roleData,
-        } = data;
+        // const {
+        //   showCreateButton,
+        //   showEditButton,
+        //   showDeleteButton,
+        //   showApproveButton,
+        //   showRejectButton,
+        //   roleData,
+        // } = data;
 
-        setActionVisibility({
-          showCreateButton: !!showCreateButton,
-          showEditButton: !!showEditButton,
-          showDeleteButton: !!showDeleteButton,
-          showApproveButton: !!showApproveButton,
-          showRejectButton: !!showRejectButton,
-        });
+        // setActionVisibility({
+        //   showCreateButton: !!showCreateButton,
+        //   showEditButton: !!showEditButton,
+        //   showDeleteButton: !!showDeleteButton,
+        //   showApproveButton: !!showApproveButton,
+        //   showRejectButton: !!showRejectButton,
+        // });
 
-        setData(roleData);
+        setData(data.roleData);
         setLoading(false);
       })
       .catch((err) => {
@@ -164,7 +176,7 @@ const AwaitingApproval: React.FC = () => {
           )
         );
       })
-      .catch((error) => {
+      .catch(() => {
         //  console.error("Bulk approve error:", error);
         // notify("Failed to approve selected roles.", "error");
         // alert("Failed to approve selected roles.");
@@ -198,7 +210,7 @@ const AwaitingApproval: React.FC = () => {
           )
         );
       })
-      .catch((error) => {
+      .catch(() => {
         //  console.error("Bulk reject error:", error);
         // alert("Failed to reject selected roles.");
         notify("Failed to reject selected roles.", "error");
@@ -248,7 +260,7 @@ const AwaitingApproval: React.FC = () => {
 
     return data.filter((user) => {
       return Object.entries(user)
-        .flatMap(([key, value]) => {
+        .flatMap(([ value]) => {
           if (typeof value === "object" && value !== null) {
             // Handle nested object (e.g., role.name)
             return Object.values(value);
@@ -262,6 +274,29 @@ const AwaitingApproval: React.FC = () => {
 
   const columns = useMemo<ColumnDef<Role>[]>(() => {
     const baseColumns: ColumnDef<Role>[] = [
+      {
+        id: "select",
+        header: ({ table }) => (
+          <div className="flex items-center justify-start">
+            <input
+              type="checkbox"
+              checked={table.getIsAllPageRowsSelected()}
+              onChange={table.getToggleAllPageRowsSelectedHandler()}
+              className="accent-primary w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+            />
+          </div>
+        ),
+        cell: ({ row }) => (
+          <div className="flex items-center justify-start">
+            <input
+              type="checkbox"
+              checked={row.getIsSelected()}
+              onChange={row.getToggleSelectedHandler()}
+              className="accent-primary w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+            />
+          </div>
+        ),
+      },
       {
         accessorKey: "srNo",
         header: "Sr No",
@@ -485,34 +520,10 @@ const AwaitingApproval: React.FC = () => {
       },
     ];
 
-    if (showSelected) {
-      baseColumns.unshift({
-        id: "select",
-        header: ({ table }) => (
-          <div className="flex items-center justify-start">
-            <input
-              type="checkbox"
-              checked={table.getIsAllPageRowsSelected()}
-              onChange={table.getToggleAllPageRowsSelectedHandler()}
-              className="accent-primary w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
-            />
-          </div>
-        ),
-        cell: ({ row }) => (
-          <div className="flex items-center justify-start">
-            <input
-              type="checkbox"
-              checked={row.getIsSelected()}
-              onChange={row.getToggleSelectedHandler()}
-              className="accent-primary w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
-            />
-          </div>
-        ),
-      });
-    }
+    
 
     return baseColumns;
-  }, [expandedRows, showSelected, toggleRowExpansion, data]);
+  }, [expandedRows, toggleRowExpansion, data]);
 
   const defaultVisibility: Record<string, boolean> = {
     srNo: true,

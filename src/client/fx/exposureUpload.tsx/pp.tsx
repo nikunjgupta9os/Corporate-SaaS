@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import { Download, Trash2, Upload } from "lucide-react";
+import {Upload } from "lucide-react";
 // import Layout from "../../common/Layout";
 import NyneOSTable from "./ReusableTable";
 import type { ColumnDef } from "@tanstack/react-table";

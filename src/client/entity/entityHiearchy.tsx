@@ -124,19 +124,19 @@ const HierarchicalTree = () => {
   }, [treeData]);
 
   // Helper functions
-  const findNodeById = (
-    node: TreeNodeType,
-    nodeId: string
-  ): TreeNodeType | null => {
-    if (node.id === nodeId) return node;
-    if (node.children) {
-      for (const child of node.children) {
-        const found = findNodeById(child, nodeId);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
+  // const findNodeById = (
+  //   node: TreeNodeType,
+  //   nodeId: string
+  // ): TreeNodeType | null => {
+  //   if (node.id === nodeId) return node;
+  //   if (node.children) {
+  //     for (const child of node.children) {
+  //       const found = findNodeById(child, nodeId);
+  //       if (found) return found;
+  //     }
+  //   }
+  //   return null;
+  // };
 
   const findNodeByIdUniversal = (
     node: TreeNodeType | TreeNodeType[],
@@ -269,33 +269,33 @@ const HierarchicalTree = () => {
     };
 
     if (Array.isArray(treeData)) {
-      setTreeData(treeData.map(updateStatus));
+      // setTreeData(treeData.map(updateStatus));
     } else if (treeData) {
       setTreeData(updateStatus(treeData));
     }
   };
 
-  const approveAllNodes = () => {
-    const approveAll = (node: TreeNodeType): TreeNodeType => {
-      return {
-        ...node,
-        data: {
-          ...node.data,
-          approval_status: "approved",
-        },
-        children: node.children?.map(approveAll),
-      };
-    };
+  // const approveAllNodes = () => {
+  //   const approveAll = (node: TreeNodeType): TreeNodeType => {
+  //     return {
+  //       ...node,
+  //       data: {
+  //         ...node.data,
+  //         approval_status: "approved",
+  //       },
+  //       children: node.children?.map(approveAll),
+  //     };
+  //   };
 
-    if (treeData) {
-      setTreeData(approveAll(treeData));
-    }
-  };
+  //   if (treeData) {
+  //     setTreeData(approveAll(treeData));
+  //   }
+  // };
 
   // Component for rendering node details
   const TreeNodeDetails = ({ node }: { node: TreeNodeType }) => {
     const isLevel1 = node.data.level === "Level 1";
-    const config = getNodeConfig(node.data.level);
+    // const config = getNodeConfig(node.data.level);
     const [editing, setEditing] = useState(false);
     const [formData, setFormData] = useState({ ...node.data });
 
@@ -438,14 +438,14 @@ const HierarchicalTree = () => {
                     <label className="font-semibold text-gray-500">
                       Business Units
                     </label>
-                    <input
+                    {/* <input
                       name="associated_business_units"
                       value={
                         formData.associated_business_units?.join(", ") || ""
                       }
                       onChange={handleChange}
                       className="w-full border rounded px-2 py-1"
-                    />
+                    /> */}
                   </div>
                 </div>
               </>

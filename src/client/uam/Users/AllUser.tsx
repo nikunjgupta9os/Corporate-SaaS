@@ -1,14 +1,10 @@
 import {
-  Filter,
-  RotateCcw,
+ 
   ChevronDown,
   ChevronUp,
-  ChevronsLeft,
-  ChevronsRight,
-  ChevronLeft,
-  ChevronRight,
+ 
   Download,
-  Upload,
+
   Trash2,
   Calendar,
 } from "lucide-react";
@@ -19,7 +15,7 @@ import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { exportToExcel } from "../../ui/exportToExcel";
 // import LoadingSpinner from "../../ui/LoadingSpinner";
-import Button from "../../ui/Button";
+// import Button from "../../ui/Button";
 
 import { useMemo, useState, useEffect } from "react";
 import { Draggable } from "../../common/Draggable";
@@ -65,6 +61,7 @@ const AllUser: React.FC = () => {
   const [editStates, setEditStates] = useState<
     Record<string, Partial<UserType>>
   >({});
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [originalData, setOriginalData] = useState<UserType[]>([]); // Store original unfiltered data
   const [statusFilter, setStatusFilter] = useState<string>("all"); // For status dropdown
@@ -79,9 +76,8 @@ const AllUser: React.FC = () => {
   ]);
 
   const [editingRows, setEditingRows] = useState<Set<string>>(new Set());
-  const [showSelected, setShowSelected] = useState<boolean>(false);
+  // const [showSelected, setShowSelected] = useState<boolean>(false);
   const [data, setData] = useState<UserType[]>([]);
-  const [loading, setloading] = useState(true);
 
   type TabVisibility = {
     // add:boolean,
@@ -129,7 +125,7 @@ const AllUser: React.FC = () => {
         if (response.data.success) {
           setLoading(false);
           const transformedUsers: UserType[] = response.data.users.map(
-            (user: any) => ({
+            (user) => ({
               authenticationType: user.authentication_type,
               employeeName: user.employee_name,
               username: user.username_or_employee_id,
@@ -163,9 +159,9 @@ const AllUser: React.FC = () => {
       .get("https://backend-5n7t.onrender.com/api/users")
       .then((response) => {
         if (response.data.success) {
-          setloading(false);
+          setLoading(false);
           const transformedUsers: UserType[] = response.data.users.map(
-            (user: any) => ({
+            (user) => ({
               id: user.id,
               authenticationType: user.authentication_type,
               employeeName: user.employee_name,
@@ -184,12 +180,12 @@ const AllUser: React.FC = () => {
           setData(transformedUsers);
           setOriginalData(transformedUsers); // Store original data
         } else {
-          setloading(false);
+          setLoading(false);
            console.error("Failed to load users:", response.data.error);
         }
       })
       .catch((error) => {
-        setloading(false);
+        setLoading(false);
          console.error("Error fetching users:", error);
       });
   }, []);
@@ -219,8 +215,8 @@ const AllUser: React.FC = () => {
 
     axios
       .post(`https://backend-5n7t.onrender.com/api/users/${userId}/delete`)
-      .then((response) => {
-        const data = response.data;
+      .then(() => {
+        // const data = response.data;
         // alert(`User delete requested successfully`);
         notify(`User delete requested successfully`, "success");
 
@@ -245,7 +241,7 @@ const AllUser: React.FC = () => {
       const lowerSearch = searchTerm.toLowerCase();
       result = result.filter((user) => {
         return Object.entries(user)
-          .flatMap(([key, value]) => {
+          .flatMap(([value]) => {
             if (typeof value === "object" && value !== null) {
               return Object.values(value);
             }
@@ -282,6 +278,20 @@ const AllUser: React.FC = () => {
 
   const columns = useMemo<ColumnDef<UserType>[]>(() => {
     const baseColumns: ColumnDef<UserType>[] = [
+      {
+        id: "select",
+        header: () => (
+          <div className="flex items-center justify-center">
+            <input type="checkbox" />
+          </div>
+        ),
+        cell: () => (
+          <div className="flex items-center justify-center">
+            <input type="checkbox" />
+          </div>
+        ),
+      },
+      
       {
         accessorKey: "srNo",
         header: "Sr No",
@@ -523,24 +533,13 @@ const AllUser: React.FC = () => {
       },
     ];
 
-    if (showSelected) {
-      baseColumns.unshift({
-        id: "select",
-        header: () => (
-          <div className="flex items-center justify-center">
-            <input type="checkbox" />
-          </div>
-        ),
-        cell: () => (
-          <div className="flex items-center justify-center">
-            <input type="checkbox" />
-          </div>
-        ),
-      });
-    }
+    // if (showSelected) {
+    //   baseColumns.unshift({
+        
+    // }
 
     return baseColumns;
-  }, [expandedRows, showSelected, toggleRowExpansion, data]);
+  }, [expandedRows, toggleRowExpansion, data]);
 
   const defaultVisibility: Record<string, boolean> = {
     select: false,
@@ -623,6 +622,7 @@ const AllUser: React.FC = () => {
                   setDateRange([
                     {
                       ...item.selection,
+                       key: "selection", // <-- Add this line
                       startDate: item.selection.startDate,
                       endDate: item.selection.endDate,
                     },
@@ -873,7 +873,7 @@ const AllUser: React.FC = () => {
                           "approvedAt",
                           // "approvalComment",
                         ]}
-                        setData={setData}
+                        // setData={setData}
                       />
                     )}
                   </React.Fragment>

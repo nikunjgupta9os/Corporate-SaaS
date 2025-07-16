@@ -25,7 +25,7 @@ import ExpandedRow from "../../common/RenderExpandedCellRole";
 import LoadingSpinner from "../../ui/LoadingSpinner";
 import PaginationFooter from "../../ui/PaginationFooter";
 import { exportToExcel } from "../../ui/exportToExcel";
-import { useNotification } from '../../Notification/Notification';
+import { useNotification } from "../../Notification/Notification";
 
 const roleFieldLabels: Record<string, string> = {
   id: "Role ID",
@@ -41,6 +41,15 @@ const roleFieldLabels: Record<string, string> = {
   approveddate: "Approved Date",
 };
 
+type BackendResponse = {
+  showCreateButton?: boolean;
+  showEditButton?: boolean;
+  showDeleteButton?: boolean;
+  showApproveButton?: boolean;
+  showRejectButton?: boolean;
+  roleData?: Role[];
+};
+
 const AllRoles: React.FC = () => {
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
@@ -49,17 +58,17 @@ const AllRoles: React.FC = () => {
   >({});
   const [searchTerm, setSearchTerm] = useState("");
   const [editingRows, setEditingRows] = useState<Set<string>>(new Set());
-  const [showSelected, setShowSelected] = useState<boolean>(true);
+  // const [showSelected, setShowSelected] = useState<boolean>(true);
   const [data, setData] = useState<Role[]>([]);
   const [loading, setLoading] = useState(true);
   const [originalData, setOriginalData] = useState<Role[]>([]); // Store original unfiltered data
-  const [actionVisibility, setActionVisibility] = useState({
-    showCreateButton: false,
-    showEditButton: false,
-    showDeleteButton: false,
-    showApproveButton: false,
-    showRejectButton: false,
-  });
+  // const [actionVisibility, setActionVisibility] = useState({
+  //   showCreateButton: false,
+  //   showEditButton: false,
+  //   showDeleteButton: false,
+  //   showApproveButton: false,
+  //   showRejectButton: false,
+  // });
 
   // Filter states
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -105,7 +114,7 @@ const AllRoles: React.FC = () => {
           });
         }
       } catch (error) {
-         console.error("Error fetching permissions:", error);
+        console.error("Error fetching permissions:", error);
       }
     };
 
@@ -149,36 +158,20 @@ const AllRoles: React.FC = () => {
       .then(({ data }) => {
         if (!data || !data.roleData) {
           setLoading(false);
-           console.error("Invalid payload structure or empty response:", data);
+          console.error("Invalid payload structure or empty response:", data);
           return;
         }
 
-        const {
-          showCreateButton,
-          showEditButton,
-          showDeleteButton,
-          showApproveButton,
-          showRejectButton,
-          roleData,
-        } = data;
 
-        setActionVisibility({
-          showCreateButton: !!showCreateButton,
-          showEditButton: !!showEditButton,
-          showDeleteButton: !!showDeleteButton,
-          showApproveButton: !!showApproveButton,
-          showRejectButton: !!showRejectButton,
-        });
-
-        setData(roleData);
+        setData(data.roleData);
         setLoading(false);
 
-        setOriginalData(roleData); // Store original data
+        setOriginalData(data.roleData); // Store original data
       })
       .catch((err) => {
         setLoading(false);
 
-         console.error("Error fetching roles:", err);
+        console.error("Error fetching roles:", err);
       });
   }, []);
 
@@ -211,7 +204,7 @@ const AllRoles: React.FC = () => {
       const lowerSearch = searchTerm.toLowerCase();
       result = result.filter((user) => {
         return Object.entries(user)
-          .flatMap(([key, value]) => {
+          .flatMap(([value]) => {
             if (typeof value === "object" && value !== null) {
               return Object.values(value);
             }
@@ -244,6 +237,19 @@ const AllRoles: React.FC = () => {
 
   const columns = useMemo<ColumnDef<Role>[]>(() => {
     const baseColumns: ColumnDef<Role>[] = [
+      {
+        id: "select",
+        header: () => (
+          <div className="flex items-center justify-start">
+            <input type="checkbox" />
+          </div>
+        ),
+        cell: () => (
+          <div className="flex items-center justify-start">
+            <input type="checkbox" />
+          </div>
+        ),
+      },
       {
         accessorKey: "srNo",
         header: "Sr No",
@@ -454,24 +460,8 @@ const AllRoles: React.FC = () => {
       },
     ];
 
-    if (showSelected) {
-      baseColumns.unshift({
-        id: "select",
-        header: () => (
-          <div className="flex items-center justify-start">
-            <input type="checkbox" />
-          </div>
-        ),
-        cell: () => (
-          <div className="flex items-center justify-start">
-            <input type="checkbox" />
-          </div>
-        ),
-      });
-    }
-
     return baseColumns;
-  }, [expandedRows, showSelected, toggleRowExpansion, data]);
+  }, [expandedRows, toggleRowExpansion, data]);
 
   const defaultVisibility: Record<string, boolean> = {
     srNo: true,
@@ -551,7 +541,14 @@ const AllRoles: React.FC = () => {
                 <DateRange
                   editableDateInputs={true}
                   onChange={(item) => {
-                    setDateRange([item.selection]);
+                    setDateRange([
+                      {
+                        startDate: item.selection.startDate,
+                        endDate: item.selection.endDate,
+                        key: "selection", // ✅ explicitly set the key
+                      },
+                    ]);
+
                     if (item.selection.startDate && item.selection.endDate) {
                       setShowDatePicker(false);
                     }

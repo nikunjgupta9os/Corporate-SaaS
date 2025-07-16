@@ -1,13 +1,15 @@
 import React from "react";
 import Button from "../ui/Button";
 import axios from "axios";
+import type { Row } from "@tanstack/react-table";
+
 
 type ExpandedRowProps = {
-  row: any;
+  row: Row<Role>;
   columnVisibility: Record<string, boolean>;
-  editStates: Record<string, Partial<UserType>>;
+  editStates: Record<string, Partial<Role>>;
   setEditStates: React.Dispatch<
-    React.SetStateAction<Record<string, Partial<UserType>>>
+    React.SetStateAction<Record<string, Partial<Role>>>
   >;
   editingRows: Set<string>;
   setEditingRows: React.Dispatch<React.SetStateAction<Set<string>>>;
@@ -48,7 +50,7 @@ const ExpandedRow: React.FC<ExpandedRowProps> = ({
     (key) => key !== "select" && key !== "actions"
   );
 
-  const handleChange = (key: keyof UserType, value: string | boolean) => {
+  const handleChange = (key: keyof Role, value: string | boolean) => {
     setEditStates((prev) => ({
       ...prev,
       [rowId]: {
@@ -59,13 +61,13 @@ const ExpandedRow: React.FC<ExpandedRowProps> = ({
   };
 
   const getChangedFields = (
-  original: UserType,
-  edited: Partial<UserType>
-): Partial<UserType> => {
-  const changes: Partial<UserType> = {};
+  original: Role,
+  edited: Partial<Role>
+): Partial<Role> => {
+  const changes: Partial<Role> = {};
   for (const key in edited) {
-    if (edited[key as keyof UserType] !== original[key as keyof UserType]) {
-      changes[key as keyof UserType] = edited[key as keyof UserType];
+    if (edited[key as keyof Role] !== original[key as keyof Role]) {
+      // changes[key as keyof Role] = edited[key as keyof UserType];
     }
   }
   return changes;
@@ -122,21 +124,21 @@ const ExpandedRow: React.FC<ExpandedRowProps> = ({
 };
 
   const renderField = (key: string) => {
-    const typedKey = key as keyof UserType;
+    const typedKey = key as keyof Role;
     const label = fieldLabels[key] ?? key;
     const isEditable = editableKeys.includes(key);
     let value =
       key === "role.name"
-        ? row.original.role?.name ?? "—"
+        ? row.original.id ?? "—"
         : isEditing
         ? editValues[typedKey]
         : row.original[typedKey];
 
-    // Format date
-    if (!isEditing && typedKey === "createdDate") {
-      const date = new Date(value as string);
-      value = isNaN(date.getTime()) ? value : date.toLocaleDateString();
-    }
+    // // Format date
+    // if (!isEditing && typedKey === "createdDate") {
+    //   const date = new Date(value as string);
+    //   value = isNaN(date.getTime()) ? value : date.toLocaleDateString();
+    // }
 
     // Format boolean
     if (!isEditing && typeof value === "boolean") {

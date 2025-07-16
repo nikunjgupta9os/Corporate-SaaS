@@ -1,16 +1,13 @@
 import {
-  Filter,
-  RotateCcw,
   ChevronDown,
   ChevronUp,
   Download,
-  Upload,
 } from "lucide-react";
 import PaginationFooter from "../../ui/PaginationFooter";
 import { exportToExcel } from "../../ui/exportToExcel";
-import Button from "../../ui/Button";
+// import Button from "../../ui/Button";
 import LoadingSpinner from "../../ui/LoadingSpinner";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { Draggable } from "../../common/Draggable";
 import { Droppable } from "../../common/Droppable";
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
@@ -24,6 +21,7 @@ import {
 } from "@tanstack/react-table";
 import ExpandedRow from "./RenderExpandedCell";
 import axios from "axios";
+// import useCallback from 'react';
 
 const fieldLabels: Record<string, string> = {
   id: "ID",
@@ -55,7 +53,7 @@ const ApprovedUser: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [editingRows, setEditingRows] = useState<Set<string>>(new Set());
-  const [showSelected, setShowSelected] = useState<boolean>(true);
+  // const [showSelected, setShowSelected] = useState<boolean>(true);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<UserType[]>([]);
 
@@ -105,7 +103,7 @@ const ApprovedUser: React.FC = () => {
         if (response.data.success) {
           setLoading(false);
           const transformedUsers: UserType[] = response.data.users.map(
-            (user: any) => ({
+            (user) => ({
               authenticationType: user.authentication_type,
               employeeName: user.employee_name,
               username: user.username_or_employee_id,
@@ -132,7 +130,8 @@ const ApprovedUser: React.FC = () => {
       });
   }, []);
 
-  const toggleRowExpansion = (rowId: string) => {
+  const toggleRowExpansion = useCallback(
+    (rowId: string) => {
     setExpandedRows((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(rowId)) {
@@ -142,7 +141,7 @@ const ApprovedUser: React.FC = () => {
       }
       return newSet;
     });
-  };
+  }, []);
 
   const filteredData = useMemo(() => {
     if (!searchTerm.trim()) return data;
@@ -151,7 +150,7 @@ const ApprovedUser: React.FC = () => {
 
     return data.filter((user) => {
       return Object.entries(user)
-        .flatMap(([key, value]) => {
+        .flatMap(([value]) => {
           if (typeof value === "object" && value !== null) {
             // Handle nested object (e.g., role.name)
             return Object.values(value);
@@ -165,6 +164,25 @@ const ApprovedUser: React.FC = () => {
 
   const columns = useMemo<ColumnDef<UserType>[]>(() => {
     const baseColumns: ColumnDef<UserType>[] = [
+      
+      {
+        id: "select",
+        header: () => (
+          <div className="flex items-center justify-center">
+            <input 
+            className="accent-primary w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+            type="checkbox" />
+          </div>
+        ),
+        cell: () => (
+          <div className="flex items-center justify-center">
+            <input 
+            className="accent-primary w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+            type="checkbox" />
+          </div>
+        ),
+      },  
+      
       {
         accessorKey: "srNo",
         header: "Sr No",
@@ -385,30 +403,13 @@ const ApprovedUser: React.FC = () => {
           </button>
         ),
       },
+      
     ];
 
-    if (showSelected) {
-      baseColumns.unshift({
-        id: "select",
-        header: () => (
-          <div className="flex items-center justify-center">
-            <input 
-            className="accent-primary w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
-            type="checkbox" />
-          </div>
-        ),
-        cell: () => (
-          <div className="flex items-center justify-center">
-            <input 
-            className="accent-primary w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
-            type="checkbox" />
-          </div>
-        ),
-      });
-    }
+    
 
     return baseColumns;
-  }, [expandedRows, showSelected, toggleRowExpansion, data]);
+  }, [expandedRows, toggleRowExpansion, data]);
 
   const defaultVisibility: Record<string, boolean> = {
     srNo: true,

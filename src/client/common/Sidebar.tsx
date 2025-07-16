@@ -3,16 +3,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   Menu,
   X,
-  BarChart2,
   FileText,
   Building,
   Layers,
   Upload,
   CheckCircle,
   LogOut,
-  Wrench,
   Settings,
-  Bolt,
   UserPlus,
   HandCoins,
   ChevronDown,
@@ -20,7 +17,6 @@ import {
   ChevronRight,
   LayoutDashboard,
   FileBarChart,
-  ChartArea,
   SquareChartGantt,
 } from "lucide-react";
 
@@ -52,7 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navItems: NavItem[] = [
     { label: "Entity", path: "/entity", icon: <Building /> },
     { label: "Entity hierarchy", path: "/hierarchical", icon: <Layers /> },
-    { label: "Masters", path: "/masters", icon: <Bolt /> },
+    // { label: "Masters", path: "/masters", icon: <Bolt /> },
     {
       label: "Settings",
       icon: <Settings />,
@@ -66,12 +62,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       label: "Dashboard",
       icon: <FileBarChart />,
       subItems: [
-        { label: "CFO Dashboard", path: "/cfo-dashboard", icon: <ChartArea /> },
+        // { label: "CFO Dashboard", path: "/cfo-dashboard", icon: <ChartArea /> },
         { label: "FX Ops Dashboard", path: "/ops-dashboard", icon: <SquareChartGantt /> },
       ],
     },
     { label: "Exposure Upload", path: "/exposure-upload", icon: <Upload /> },
-    { label: "Exposure Bucketing", path: "/exposure-bucketing", icon: <BarChart2 /> },
+    // { label: "Exposure Bucketing", path: "/exposure-bucketing", icon: <BarChart2 /> },
     { label: "Hedging Proposal", path: "/hedging-proposal", icon: <FileText /> },
     { label: "Hedging Dashboard", path: "/hedging-dashboard", icon: <LayoutDashboard /> },
     { label: "FX Forward Booking", path: "/fxbooking", icon: <CheckCircle /> },

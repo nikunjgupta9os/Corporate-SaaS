@@ -38,7 +38,8 @@ interface UserType {
   businessUnitName: string;            // Maps from business_unit_name
   status: string;                      // approved / pending / rejected
   createdBy: string;                   // Maps from created_by
-  createdDate: string;                // Maps from created_at
+  createdDate: string; 
+  role?:string;               // Maps from created_at
 
   approvedBy?: string | null;
   approvedAt?: string | null;

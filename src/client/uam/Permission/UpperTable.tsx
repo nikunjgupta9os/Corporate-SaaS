@@ -6,7 +6,7 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 import axios from "axios";
-import { Save } from "lucide-react";
+// import { Save } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import Button from "../../ui/Button";
 import LoadingSpinner from "../../ui/LoadingSpinner";
@@ -308,9 +308,10 @@ const PermissionsTable: React.FC<prop> = ({ roleName }) => {
     { RoleName: roleName, PageID: 12, PageName: "fxstatusdash" },
   ];
 
-  const [data, setData] = useState<Table[]>(mockData);
+  const [data, setData] = useState<Table[]>();
 
   // Get tabs for a specific page
+  setData(mockData);
   const getTabsForPage = (pageName: string): string[] => {
     const pagesWithTabs = [
       "roles",
@@ -500,7 +501,7 @@ const PermissionsTable: React.FC<prop> = ({ roleName }) => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  const ExpandedRow = ({ row }: { row: any }) => {
+  const ExpandedRow = ({ row }: { row}) => {
     const tabs = getTabsForPage(row.original.PageName);
     const pageHasAccess = getPageAccess(row.original.PageName);
 
@@ -643,7 +644,7 @@ const PermissionsTable: React.FC<prop> = ({ roleName }) => {
 
             // Check nested tabs like default, uploadTab, etc. for hasAccess: true
             const hasNestedTabAccess = Object.entries(pageData).some(
-              ([key, value]) =>
+              ( value) =>
                 typeof value === "object" &&
                 value !== null &&
                 "hasAccess" in value &&
@@ -662,10 +663,10 @@ const PermissionsTable: React.FC<prop> = ({ roleName }) => {
           // alert("Permission data not found.");
           notify("Permission data not found.", "error");
         }
-      } catch (error) {
+      } catch (err) {
         //  console.error("Error fetching permission data:", error);
         // alert("Failed to load permission data.");
-        notify("Failed to load permission data.", "error");
+        notify(`Failed to load permission data ${err}`, "error");
       } finally {
         setLoading(false);
       }
@@ -708,10 +709,10 @@ const PermissionsTable: React.FC<prop> = ({ roleName }) => {
         notify("Error saving permissions: " + response.data.error, "error");
       }
     } catch (error) {
-      setLoading;
+      setLoading(false);
       //  console.error("Request failed:", error);
       // alert("Request failed. Check  console.");
-      notify("Request failed. Check console.", "error");
+      notify(`Request failed. Check console ${error}`, "error");
     } finally {
       setLoading(false);
     }
@@ -728,9 +729,11 @@ const PermissionsTable: React.FC<prop> = ({ roleName }) => {
           </h1>
         </div>
         <div>
-          <Button onClick={handleSave} icon={<Save className="h-4 w-4" />}>
+          {/* <Button onClick={handleSave} icon={<Save className="h-4 w-4" />}>
             Submit
-          </Button>
+          </Button> */}
+          <Button onClick={handleSave}> Submit </Button>
+
         </div>
       </div>
 

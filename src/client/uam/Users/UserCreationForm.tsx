@@ -23,10 +23,10 @@ const UserCreationForm: React.FC = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, reset } = useForm<FormData>();
   const [roles, setRoles] = useState<string[]>([]);
-  const [formError, setFormError] = useState('');
-  const [timeError, setTimeError] = useState('');
-  const [form, setForm] = useState<FormData[]>([]);
-  
+  const [formError, setFormError] = useState("");
+  const [timeError, setTimeError] = useState("");
+  // const [form, setForm] = useState<FormData[]>([]);
+  console.log("Form data:", formError, timeError);
 
   useEffect(() => {
     axios
@@ -34,76 +34,78 @@ const UserCreationForm: React.FC = () => {
       .then(({ data }) => {
         const roles = data.roles.map((role: string) => role);
         setRoles(roles);
-         console.log(roles);
+        console.log(roles);
       })
       .catch((error) => {
-         console.error("Error fetching roles:", error);
+        console.error("Error fetching roles:", error);
       });
   }, []);
 
-  
   const onReset = () => {
     reset();
   };
 
   const onSubmit = (data: FormData) => {
-  const {
-    authenticationType,
-    employeeName,
-    roleName,
-    usernameOrEmployeeId,
-    email,
-    mobile,
-    address,
-    businessUnitName,
-  } = data;
+    const {
+      authenticationType,
+      employeeName,
+      roleName,
+      usernameOrEmployeeId,
+      email,
+      mobile,
+      address,
+      businessUnitName,
+    } = data;
 
-  if (!mobile || !address || !businessUnitName) {
-    setFormError("All fields are required.");
-    return;
-  }
+    if (!mobile || !address || !businessUnitName) {
+      setFormError("All fields are required.");
+      return;
+    }
 
-  setFormError("");
-  setTimeError("");
+    setFormError("");
+    setTimeError("");
 
-  const payload = {
-    authentication_type: authenticationType,
-    employee_name: employeeName,
-    role : roleName,
-    username_or_employee_id: usernameOrEmployeeId,
-    email,
-    mobile,
-    address,
-    business_unit_name: businessUnitName,
-    created_by: localStorage.getItem("userEmail"),
+    const payload = {
+      authentication_type: authenticationType,
+      employee_name: employeeName,
+      role: roleName,
+      username_or_employee_id: usernameOrEmployeeId,
+      email,
+      mobile,
+      address,
+      business_unit_name: businessUnitName,
+      created_by: localStorage.getItem("userEmail"),
+    };
+    console.log(payload);
+
+    axios
+      .post("https://backend-5n7t.onrender.com/api/users/create", payload)
+      .then((res) => {
+        if (res.data.success) {
+          // alert("User created successfully!");
+          notify("User created successfully!", "success");
+          reset(); // Clear the form
+          navigate("/user");
+        } else {
+          // alert("Failed to create user: " + (res.data.error || "Unknown error."));
+          notify(
+            "Failed to create user: " + (res.data.error || "Unknown error."),
+            "warning"
+          );
+        }
+      })
+      .catch((err) => {
+        console.error("Error creating user:", err);
+        // alert("Failed to create user.");
+        notify("Error creating user.", "error");
+      });
   };
-   console.log(payload);
-
-  axios
-    .post("https://backend-5n7t.onrender.com/api/users/create", payload)
-    .then((res) => {
-      if (res.data.success) {
-        // alert("User created successfully!");
-        notify("User created successfully!", "success");
-        reset(); // Clear the form
-        navigate("/user");
-      } else {
-        // alert("Failed to create user: " + (res.data.error || "Unknown error."));
-        notify("Failed to create user: " + (res.data.error || "Unknown error."), "warning");
-      }
-    })
-    .catch((err) => {
-       console.error("Error creating user:", err);
-      // alert("Failed to create user.");
-      notify('Error creating user.', "error");
-    });
-};
 
   const PageChange = () => {
     navigate("/user");
   };
 
-  const {notify} = useNotification();
+  const { notify } = useNotification();
 
   return (
     <Layout
@@ -114,7 +116,9 @@ const UserCreationForm: React.FC = () => {
     >
       <div className="flex justify-center">
         <div className="p-6 rounded-xl border border-border bg-secondary-color-lt  shadow-md space-y-6 flex-shrink-0 w-full max-w-[1500px]">
-          <h2 className="text-xl font-semibold text-secondary-text">Create User Form</h2>
+          <h2 className="text-xl font-semibold text-secondary-text">
+            Create User Form
+          </h2>
 
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -127,7 +131,9 @@ const UserCreationForm: React.FC = () => {
             />
 
             <div>
-              <label className="text-secondary-text">Authentication Type<span className="text-red-500">*</span></label>
+              <label className="text-secondary-text">
+                Authentication Type<span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 defaultValue="LDAP"
@@ -139,7 +145,9 @@ const UserCreationForm: React.FC = () => {
             </div>
 
             <div>
-              <label className="text-secondary-text">Employee Name<span className="text-red-500">*</span></label>
+              <label className="text-secondary-text">
+                Employee Name<span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 {...register("employeeName", {
@@ -151,7 +159,9 @@ const UserCreationForm: React.FC = () => {
             </div>
 
             <div>
-              <label className="text-secondary-text">Username / Employee ID<span className="text-red-500">*</span></label>
+              <label className="text-secondary-text">
+                Username / Employee ID<span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 {...register("usernameOrEmployeeId", {
@@ -218,7 +228,6 @@ const UserCreationForm: React.FC = () => {
               />
             </div>
 
-
             <div className="col-span-2 flex justify-end gap-4 mt-4">
               <Button type="button" categories="Medium" onClick={onReset}>
                 <span className="text-white">Reset</span>
@@ -227,10 +236,12 @@ const UserCreationForm: React.FC = () => {
                 <span className="text-white">Submit</span>
               </Button>
             </div>
-            
           </form>
         </div>
+      {formError && <div></div>}
+      {timeError && <div></div>}
       </div>
+      
     </Layout>
   );
 };

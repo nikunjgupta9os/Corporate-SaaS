@@ -1,4 +1,3 @@
-import React from 'react';
 import { CreditCard, TrendingUp, RotateCcw, Building2 } from 'lucide-react';
 
 const FinancialDashboard = () => {
@@ -86,7 +85,7 @@ const forwardsData = [
           <div className="text-2xl font-bold text-slate-800 text-center py-2 px-4 rounded-lg">$187.4M</div>
           <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
             <div className="space-y-1">
-              {payablesData.map((item, index) => (
+              {payablesData.map((item, _) => (
                 <div key={item.currency} className="flex justify-between items-center py-2 px-3 bg-white/70 rounded-lg hover:bg-white transition-colors shadow-sm">
                   <span className="text-slate-700 text-sm font-medium flex items-center">
                     <span className="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
@@ -130,7 +129,7 @@ const forwardsData = [
           <div className="text-2xl font-bold text-slate-800 text-center py-2 px-4 rounded-lg ">$204.2M</div>
           <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
             <div className="space-y-1">
-              {receivablesData.map((item, index) => (
+              {receivablesData.map((item, _) => (
                 <div key={item.currency} className="flex justify-between items-center py-2 px-3 bg-white/70 rounded-lg hover:bg-white transition-colors shadow-sm">
                   <span className="text-slate-700 text-sm font-medium flex items-center">
                     <span className="w-2 h-2 bg-orange-400 rounded-full mr-2"></span>

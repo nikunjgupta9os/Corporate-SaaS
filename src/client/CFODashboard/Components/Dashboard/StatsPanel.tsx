@@ -11,8 +11,6 @@ type StatCardType = {
   bgColor: string;
 };
 
-// --- Constants ---
-const TIME_FRAMES: TimeFrame[] = ["week", "month", "year"];
 
 // --- Mock Data ---
 const statsData: StatCardType[] = [
@@ -81,12 +79,7 @@ interface StatCardProps {
   onTimeFrameChange?: (frame: TimeFrame) => void;
 }
 
-const StatCard = ({ data, selectedFrame, onTimeFrameChange }: StatCardProps) => {
-  const hasTimeFrames = typeof data.change === "object" && data.change !== null;
-  const changeValue =
-    hasTimeFrames && selectedFrame
-      ? (data.change as Record<TimeFrame, string>)[selectedFrame]
-      : data.change;
+const StatCard = ({ data }: StatCardProps) => {
 
   return (
     <div

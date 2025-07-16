@@ -1,5 +1,3 @@
-declare module 'react-grid-layout';
-
 import React from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import PlacedChart from './PlacedChart';
@@ -101,14 +99,14 @@ const ChartCanvas: React.FC<ChartCanvasProps> = ({
 
   // Validate and fix layout data
   const validatedCharts = charts.map((chart, index) => {
-    const layout = chart.layout || {};
+    const layout = chart.layout;
     
     // If layout is incomplete, calculate next available position
-    if (typeof layout.x !== 'number' || typeof layout.y !== 'number') {
+    if (!layout || typeof layout.x !== 'number' || typeof layout.y !== 'number') {
       const position = getNextPosition(
         charts.slice(0, index).filter(c => c.layout && typeof c.layout.x === 'number' && typeof c.layout.y === 'number'),
-        layout.w || 6,
-        layout.h || 4
+        layout?.w || 6,
+        layout?.h || 4
       );
       
       return {
@@ -117,8 +115,8 @@ const ChartCanvas: React.FC<ChartCanvasProps> = ({
           i: chart.id,
           x: position.x,
           y: position.y,
-          w: typeof layout.w === 'number' ? layout.w : 6,
-          h: typeof layout.h === 'number' ? layout.h : 4,
+          w: typeof layout?.w === 'number' ? layout.w : 6,
+          h: typeof layout?.h === 'number' ? layout.h : 4,
           minW: 2,
           minH: 2,
           maxW: 12,

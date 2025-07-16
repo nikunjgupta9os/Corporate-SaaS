@@ -1,35 +1,42 @@
 import Layout from "../../common/Layout";
 // import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+// import { useForm } from "react-hook-form";
 import Button from "../../ui/Button";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../Notification/Notification";
-type FormData = {
-  processname: string;
-  authenticationType: string;
-  employeeName: string;
-  usernameOrEmployeeId: string;
-  roleName: string;
-  email: string;
-  mobile: string;
-  address: string;
-  businessUnitName: string;
-  officeStartTimeIST: string;
-  officeEndTimeIST: string;
-};
+// type FormData = {
+//   processname: string;
+//   authenticationType: string;
+//   employeeName: string;
+//   usernameOrEmployeeId: string;
+//   roleName: string;
+//   email: string;
+//   mobile: string;
+//   address: string;
+//   businessUnitName: string;
+//   officeStartTimeIST: string;
+//   officeEndTimeIST: string;
+// };
 const RoleCreation: React.FC = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit, reset } = useForm<FormData>();
+  // const { reset } = useForm<FormData>();
   const [roles, setRoles] = useState<string[]>([]);
   const [formError, setFormError] = useState("");
   const [timeError, setTimeError] = useState("");
   const { notify } = useNotification();
 
   const onReset = () => {
-    reset(); 
-  };
+  setForm({
+    name: "",
+    description: "",
+    startTime: "",
+    endTime: "",
+  });
+  setFormError("");
+  setTimeError("");
+};
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +84,7 @@ const RoleCreation: React.FC = () => {
           notify("Failed to create role: " + (res.data.error || "Unknown error."), "error");
         }
       })
-      .catch((err) => {
+      .catch(() => {
         //  console.error("Error creating role:", err);
         // alert("Failed to create role.");
         notify("Failed to create role.", "error");
@@ -188,6 +195,7 @@ const RoleCreation: React.FC = () => {
             </div>
           </form>
         </div>
+        {roles && <div></div>}
       </div>
     </Layout>
   );
