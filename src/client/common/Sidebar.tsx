@@ -18,6 +18,7 @@ import {
   LayoutDashboard,
   FileBarChart,
   SquareChartGantt,
+  ChartArea,
 } from "lucide-react";
 
 import "../styles/theme.css";
