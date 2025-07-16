@@ -101,16 +101,16 @@ const TotalBalance: React.FC<TotalBalanceProps> = ({
 
   return (
     <div className="relative z-10 mb-6">
-      <div className="flex items-center gap-6 mx-2 mb-2">
+      <div className="flex items-center justify-between mx-2 mb-2">
         <span className="text-4xl font-bold font-mono min-w-[12ch] text-left">
           {formatCurrency(totalAmount, baseCurrency)}
         </span>
-        <div className="relative right-2 flex items-center gap-1 text-sm bg-green-500 px-1 py-1 rounded-full">
+        <div className=" flex items-center gap-1 text-sm bg-green-500 px-1 py-1 rounded-full">
           <span className="text-green-100 text-sm font-bold">+{monthlyGrowth}%</span>
           <TrendingUp className="w-4 h-4 text-green-200" />
         </div>
       </div>
-      <p className="text-blue-200 text-sm relative top-4">
+      <p className="text-secondary-color text-sm relative top-4">
         Converted to {baseCurrency} • Last updated: Now
       </p>
     </div>
@@ -172,7 +172,7 @@ const CurrencyAccountItem: React.FC<CurrencyAccountItemProps> = ({
 
   return (
     <div
-      className="flex items-center text-gray-800 bg-white justify-between p-3 hover:bg-gray-200 rounded-lg transition-colors relative border-b border-gray-200 border-opacity-5 last:border-b-0"
+      className="flex items-center text-gray-800 bg-white justify-between p-3 hover:bg-primary-lg rounded-lg transition-colors relative border-b border-gray-200 border-opacity-5 last:border-b-0"
       style={{ minHeight: '60px' }}
     >
       <div className="flex items-center gap-3 relative z-10">
@@ -258,7 +258,7 @@ const MultiCurrencyDashboard: React.FC = () => {
   const [baseCurrency, setBaseCurrency] = useState<string>('USD');
 
   return (
-    <div className="w-full max-w-2xl bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white relative overflow-hidden
+    <div className="w-full bg-gradient-to-br from-[#06923E] to-[#67AE6E] rounded-2xl p-6 text-white relative overflow-hidden
       transition duration-200 ease-in-out
       hover:shadow-lg hover:scale-[1.02] hover:bg-opacity-90"
     >      {/* Background Grid */}
@@ -286,7 +286,7 @@ const MultiCurrencyDashboard: React.FC = () => {
       <div className="flex justify-between items-start mx-2 mb-6 relative z-10">
         <div className="flex flex-col items-start">
           <h2 className="text-xl font-semibold">Total Company Assets</h2>
-          <p className="text-blue-200 text-sm mt-1">Multi-currency portfolio</p>
+          <p className="text-secondary-color-lt text-sm mt-1">Multi-Currency Portfolio</p>
         </div>
         <div className="flex items-center gap-2">
           <select

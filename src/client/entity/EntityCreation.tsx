@@ -3,7 +3,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import Layout from "../common/Layout";
-
+import { no } from "zod/v4/locales";
+import { useNotification } from "../Notification/Notification.tsx";
 const entityTypes = ["Legal", "Non-Legal"];
 const entities = ["Choose...", "Level 1", "Level 2", "Level 3", "Level 4"];
 const currencies = ["INR", "USD", "EUR", "GBP"];
@@ -73,7 +74,7 @@ const EntityCreation: React.FC = () => {
   const [parentOptions, setParentOptions] = useState<string[]>([]);
   const [legal, setLegal] = useState(true);
   const [formData, setFormData] = useState<any>(null); // for useEffect logging
-
+  const {notify} = useNotification();
   const PageChange = useCallback(() => {
     navigate("/entity");
   }, [navigate]);
@@ -128,7 +129,9 @@ const EntityCreation: React.FC = () => {
         body: JSON.stringify(payload),
       });
       const result = await response.json();
-       console.log("API response:", result);
+      //  console.log("API response:", result);
+      // notify("Entity created successfully!", "success");
+      notify("Entity created successfully!", "success");
     } catch (error) {
        console.error("API Error:", error);
     }

@@ -308,10 +308,10 @@ const PermissionsTable: React.FC<prop> = ({ roleName }) => {
     { RoleName: roleName, PageID: 12, PageName: "fxstatusdash" },
   ];
 
-  const [data, setData] = useState<Table[]>();
+  const [data, setData] = useState<Table[]>(mockData);
 
   // Get tabs for a specific page
-  setData(mockData);
+  // setData(mockData);
   const getTabsForPage = (pageName: string): string[] => {
     const pagesWithTabs = [
       "roles",

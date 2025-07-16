@@ -32,17 +32,17 @@ const StatsSummary: React.FC<StatsSummaryProps> = ({ data, selectedMetric }) => 
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
-      <div className=" p-4 text-black flex flex-col items-center justify-center">
-        <p className="text-3xl font-bold">{total.toLocaleString()}</p>
-        <p>Total</p>
+      <div className=" p-4 flex  flex-col items-center justify-center">
+        <p className="text-3xl text-primary font-bold">{total.toLocaleString()}</p>
+        <p className='font-normal text-secondary-text-dark'>Total</p>
       </div>
-      <div className=" p-4 text-black flex flex-col items-center justify-center">
-        <p className="text-3xl font-bold">{avg.toFixed(2)}</p>
-        <p>Average</p>
+      <div className=" p-4 flex flex-col items-center justify-center">
+        <p className="text-3xl text-primary font-bold">{avg.toFixed(2)}</p>
+        <p className='font-normal text-secondary-text-dark'>Average</p>
       </div>
-      <div className=" p-4 text-black flex flex-col items-center justify-center">
-        <p className="text-3xl font-bold">{growth.toFixed(2)}%</p>
-        <p>Growth</p>
+      <div className=" p-4 flex flex-col items-center justify-center">
+        <p className="text-3xl text-primary font-bold">{growth.toFixed(2)}%</p>
+        <p className='font-normal text-secondary-text-dark'>Growth</p>
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import MaturityTable from "./MaturityTable";
 import LoadingSpinner from "../../ui/LoadingSpinner";
 import { formatCurrency } from "./MaturityTable";
 import DetailedViews from "./DetailedViews.tsx";
+import axios from "axios";
 
 export interface NetExposureCurrency {
   bu: string;
@@ -62,30 +63,15 @@ const MATURITY_ORDER: Record<string, number> = {
 };
 
 async function fetchExposureData(): Promise<ApiExposureData[]> {
-  return [
-    {
-      bu: "Dept 1",
-      maturity: "1 Month",
-      currency: "USD",
-      payable: 10000,
-      receivable: 15000,
-    },
-    {
-      bu: "Dept 2",
-      maturity: "2 Month",
-      currency: "EUR",
-      payable: 20000,
-      receivable: 25000,
-    },
-    {
-      bu: "Branch B",
-      maturity: "6 Month +",
-      currency: "USD",
-      payable: 20000,
-      receivable: 25000,
-    },
-    // Add more mock data as needed
-  ];
+  try {
+    const response = await axios.get<ApiExposureData[]>(
+      "https://backend-5n7t.onrender.com/api/exposureUpload/netanalysis"
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching exposure data:", error);
+    return [];
+  }
 }
 
 const NetExposure: React.FC = () => {
@@ -157,49 +143,39 @@ const NetExposure: React.FC = () => {
     return ["All", ...Array.from(bus)].sort();
   }, [mergedData]);
 
-  // Group data by BU and Maturity (sorted)
-  const groupedDataByBUAndMaturity = useMemo(() => {
-    const result: Record<string, Record<string, NetExposureCurrency[]>> = {};
+  // Group data by Maturity only (sorted)
+  const groupedDataByMaturity = useMemo(() => {
+    const result: Record<string, NetExposureCurrency[]> = {};
 
     filteredData.forEach((row) => {
-      if (!result[row.bu]) result[row.bu] = {};
-      if (!result[row.bu][row.maturity]) result[row.bu][row.maturity] = [];
-      result[row.bu][row.maturity].push(row);
+      if (!result[row.maturity]) result[row.maturity] = [];
+      result[row.maturity].push(row);
     });
 
-    // Sort maturities within each BU
-    Object.keys(result).forEach((bu) => {
-      const maturityGroups = result[bu];
-      const sortedMaturities = Object.keys(maturityGroups).sort(
-        (a, b) => (MATURITY_ORDER[a] || 999) - (MATURITY_ORDER[b] || 999)
-      );
+    // Sort maturities and return sorted object
+    const sortedMaturities = Object.keys(result).sort(
+      (a, b) => (MATURITY_ORDER[a] || 999) - (MATURITY_ORDER[b] || 999)
+    );
 
-      const sortedGroup: Record<string, NetExposureCurrency[]> = {};
-      sortedMaturities.forEach((maturity) => {
-        sortedGroup[maturity] = maturityGroups[maturity];
-      });
-
-      result[bu] = sortedGroup;
+    const sortedGroup: Record<string, NetExposureCurrency[]> = {};
+    sortedMaturities.forEach((maturity) => {
+      sortedGroup[maturity] = result[maturity];
     });
 
-    return result;
+    return sortedGroup;
   }, [filteredData]);
 
   // Initialize expanded state
   useEffect(() => {
     if (filteredData.length > 0) {
       const newExpandedMap: Record<string, boolean> = {};
-      Object.entries(groupedDataByBUAndMaturity).forEach(
-        ([bu, maturityGroup]) => {
-          Object.keys(maturityGroup).forEach((maturity) => {
-            newExpandedMap[`${bu}-${maturity}`] = true;
-          });
-        }
-      );
+      Object.keys(groupedDataByMaturity).forEach((maturity) => {
+        newExpandedMap[maturity] = true;
+      });
       setExpandedMap(newExpandedMap);
       setIsLoading(false);
     }
-  }, [filteredData, groupedDataByBUAndMaturity]);
+  }, [filteredData, groupedDataByMaturity]);
 
   // Fetch data on mount
   useEffect(() => {
@@ -216,8 +192,8 @@ const NetExposure: React.FC = () => {
     fetchData();
   }, []);
 
-  const toggleExpand = (key: string) => {
-    setExpandedMap((prev) => ({ ...prev, [key]: !prev[key] }));
+  const toggleExpand = (maturity: string) => {
+    setExpandedMap((prev) => ({ ...prev, [maturity]: !prev[maturity] }));
   };
 
   // Get unique maturities for summary tables (sorted)
@@ -299,24 +275,15 @@ const NetExposure: React.FC = () => {
           </div>
 
           {/* Main tables */}
-          {Object.entries(groupedDataByBUAndMaturity).map(
-            ([bu, maturityGroup]) => (
-              <div key={bu}>
-                {Object.entries(maturityGroup).map(([maturity, rows]) => {
-                  const key = `${bu}-${maturity}`;
-                  return (
-                    <MaturityTable
-                      key={key}
-                      maturity={`Maturity : ${maturity}`}
-                      rows={rows}
-                      expanded={expandedMap[key] || false}
-                      toggleExpand={() => toggleExpand(key)}
-                    />
-                  );
-                })}
-              </div>
-            )
-          )}
+          {Object.entries(groupedDataByMaturity).map(([maturity, rows]) => (
+            <MaturityTable
+              key={maturity}
+              maturity={`Maturity : ${maturity}`}
+              rows={rows}
+              expanded={expandedMap[maturity] || false}
+              toggleExpand={() => toggleExpand(maturity)}
+            />
+          ))}
 
           {/* Grand totals table */}
           <div className="mb-6 overflow-x-auto">

@@ -10,51 +10,51 @@ import DashboardDemo from "./Components/DashboardDemo/DashboardDemo";
 import CurrencyExposure from "./Components/NetExposure/NetCurrencyExposure";
 import FinancialDashboard from "./Components/StatesDashboard/StatesDashboard";
 import BusinessUnitExposureCard from "./Components/BusinessUnitExposureCard/BusinessUnitExposureCard";
-import TradingOverviewCards from "./Components/TradingOverviewCards/TradingOverviewCards";
+import RecentTradingActivityCard from "./Components/TradingOverviewCards/RecentTradingActivityCard";
+import ForwardMaturityAnalysisCard from "./Components/TradingOverviewCards/ForwardMaturityAnalysisCard";
 
 function CFODashboard() {
   return (
     <Layout title="CFO Dashboard">
-      <div className=" mt-8 text-center py-4">
-        <div className="mt-2 border-b pb-5 mx-4 border-gray-300 text-centerpy-4 text-4xl">
-          <span className=" font-medium border-gray-400 pb-1 px-6">CFO Forex Risk Management DashBoard</span>
-          <p className="text-lg font-light">Strategic Oversight & Performance Monitoring</p>
-        </div>
-        <div className="flex">  
-          <div className="flex flex-col mt-4 mr-2 text-black w-1/2">
+      <div className="text-center py-4">
+        <div className="grid grid-cols-2 gap-6">  
+          <div className="flex flex-col ">
             <div>
               <StatsPanel />
             </div>
-            <div>
+            <div className='mt-6'>
               <DashboardDemo />
             </div>
-            <div className="mr-6">
+            <div className="mt-6">
               <BusinessUnitExposureCard />
             </div>
+            <div className="mt-6">
+              <RecentTradingActivityCard />
+            </div>
           </div>
-          <div className="mt-8 text-black w-1/2">
-            <div className="mb-4">
+          <div className="">
+            <div className="">
               <AlertDashboard />
             </div>
-            <div className="flex gap-4">
-              <div className="w-3/5 mb-6">
+            <div className="grid grid-cols-[1.5fr_1fr] gap-6 mt-6">
+              <div className="">
                 <MultiCurrencyDashboard />
               </div>
-              <div className="w-2/5 mb-6">
+              <div className="">
                 <CurrencyExposure />
               </div>
             </div>
-            <div>
+            <div className='mt-6'>
               <FinancialDashboard />
             </div>
-            <div className="my-4 ">
-              <TradingOverviewCards />
+            <div className="mt-6">
+              <ForwardMaturityAnalysisCard />
             </div>
           </div>
           
         </div>
         
-        <div className="mt-6">
+        <div className="mt-10">
           <DraggableDashboardBuilder />
         </div>
       </div> 

@@ -29,7 +29,7 @@ const InputPanel: React.FC<InputPanelProps> = ({
       <select
         value={selectedMetric}
         onChange={e => setSelectedMetric(e.target.value as MetricType)}
-        className="p-2 rounded-2xl bg-gray-100 text-black border-2 border-gray-500"
+        className="p-2 rounded-2xl bg-primary-xl text-secondary-text-dark border-2 border-primary-lg"
       >
         {metrics.map(metric => (
           <option key={metric} value={metric}>
@@ -37,16 +37,16 @@ const InputPanel: React.FC<InputPanelProps> = ({
           </option>
         ))}
       </select>
-      <select value={dateRange} onChange={e => setDateRange(e.target.value)} className="p-2 rounded-2xl bg-gray-100 text-black border-2 border-gray-500">
+      <select value={dateRange} onChange={e => setDateRange(e.target.value)} className="p-2 rounded-2xl bg-primary-xl text-secondary-text-dark border-2 border-primary-lg">
         <option value="all">All Time</option>
         <option value="6m">Last 6 Months</option>
         <option value="3m">Last 3 Months</option>
       </select>
-      <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className="p-2 rounded-2xl bg-gray-100 text-black border-2 border-gray-500">
+      <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className="p-2 rounded-2xl bg-primary-xl text-secondary-text-dark border-2 border-primary-lg">
         <option value="all">All Categories</option>
         {categories.map(c => <option key={c} value={c}>{c}</option>)}
       </select>
-      <select value={regionFilter} onChange={e => setRegionFilter(e.target.value)} className="p-2 rounded-2xl bg-gray-100 text-black border-2 border-gray-500">
+      <select value={regionFilter} onChange={e => setRegionFilter(e.target.value)} className="p-2 rounded-2xl bg-primary-xl text-secondary-text-dark border-2 border-primary-lg">
         <option value="all">All Regions</option>
         {regions.map(r => <option key={r} value={r}>{r}</option>)}
       </select>

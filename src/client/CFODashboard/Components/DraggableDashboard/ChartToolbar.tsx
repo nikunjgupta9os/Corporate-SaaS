@@ -49,7 +49,7 @@ const chartTypes: {
 
 const ChartToolbar: React.FC<ChartToolbarProps> = ({ activeChart, setActiveChart, chartSuitability }) => {
   return (
-    <div className="flex flex-wrap gap-2 mb-4 ml-10 mt-10">
+    <div className="flex flex-wrap gap-4 mb-4 mx-auto mt-10 justify-center">
       {chartTypes.map(({ id, label, icon: Icon }) => {
         const isActive = activeChart === id;
         const isSuitable = chartSuitability ? chartSuitability[id] : true;
@@ -61,10 +61,10 @@ const ChartToolbar: React.FC<ChartToolbarProps> = ({ activeChart, setActiveChart
             disabled={!isSuitable}
             className={`flex items-center gap-2 px-4 py-2 rounded-md border transition ${
               isActive
-                ? 'bg-blue-400 text-white border-gray-400'
+                ? 'bg-primary border-primary text-white '
                 : isSuitable
-                ? 'bg-blue-100 text-gray-600 hover:bg-gray-200 border-gray-400'
-                : 'bg-gray-100 text-gray-400 opacity-50 cursor-not-allowed border-gray-300'
+                ? 'bg-primary-lg text-gray-600 border-primary hover:bg-primary-lt hover:text-white'
+                : 'bg-primary-xl text-gray-400 opacity-50 cursor-not-allowed'
             }`}
           >
             <Icon size={18} /> {label}

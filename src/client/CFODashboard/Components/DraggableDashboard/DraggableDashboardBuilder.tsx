@@ -85,7 +85,7 @@ const DraggableDashboardBuilder = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
       <div className="bg-white border-y border-gray-300 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -99,7 +99,7 @@ const DraggableDashboardBuilder = () => {
             
             {/* Action Buttons */}
             <div className="flex items-center gap-3">
-              <button
+              {/* <button
                 onClick={() => setShowFilters(prev => !prev)}
                 className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all ${
                   showFilters 
@@ -109,7 +109,7 @@ const DraggableDashboardBuilder = () => {
               >
                 <Filter size={18} />
                 {showFilters ? 'Hide Filters' : 'Show Filters'}
-              </button>
+              </button> */}
 
               <button
                 onClick={() => setShowPreview(prev => !prev)}
@@ -156,7 +156,7 @@ const DraggableDashboardBuilder = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="mx-auto py-6">
         {/* Filters Panel */}
         {showFilters && (
           <div className="mb-6 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
@@ -177,9 +177,9 @@ const DraggableDashboardBuilder = () => {
         )}
 
         {/* Stats Summary */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <StatsSummary data={filteredData} selectedMetric={selectedMetric} />
-        </div>
+        </div> */}
 
         {/* Chart Preview Section */}
         {showPreview && (

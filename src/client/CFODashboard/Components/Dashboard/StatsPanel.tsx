@@ -1,5 +1,5 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import axios from "axios";
 // --- Types ---
 type TimeFrame = "week" | "month" | "year";
 type StatCardType = {
@@ -20,7 +20,7 @@ const statsData: StatCardType[] = [
     value: "87.3%", 
     icon: "📊", 
     change: { week: "-0.5%", month: "+2.1%", year: "+11.4%" }, 
-    bgColor: "bg-gradient-to-br from-blue-400 to-blue-600" 
+    bgColor: "bg-gradient-to-tr from-[#1299909E] to-[#129990]" 
   },
   { 
     id: '2', 
@@ -28,7 +28,7 @@ const statsData: StatCardType[] = [
     value: "$1.2301M", 
     icon: "🏦", 
     change: { week: "+2.1%", month: "+7.9%", year: "+15.5%" }, 
-    bgColor: "bg-gradient-to-br from-purple-500 via-purple-800 to-purple-900"  
+    bgColor: "bg-gradient-to-r from-[#65b67cf7] to-green-700"  
   },
   { 
     id: '3', 
@@ -36,7 +36,7 @@ const statsData: StatCardType[] = [
     value: "$0M", 
     icon: "🔥", 
     change: { week: "-1.2%", month: "+5.0%", year: "+8.7%" }, 
-    bgColor: "bg-gradient-to-tr from-orange-500 to-yellow-400" 
+    bgColor: "bg-gradient-to-br from-[#0d6d69CC] to-[#0a5755B3]" 
   },
   { 
     id: '4', 
@@ -44,7 +44,7 @@ const statsData: StatCardType[] = [
     value: "$3.1M", 
     icon: "💰", 
     change: { week: "+$0.3M", month: "+$1.2M", year: "+$10.2M" }, 
-    bgColor: "bg-gradient-to-tl from-teal-500 to-teal-600" 
+    bgColor: "bg-gradient-to-b from-teal-500 to-teal-600" 
   },
   { 
     id: '5', 
@@ -52,7 +52,7 @@ const statsData: StatCardType[] = [
     value: "$1.47M", 
     icon: "💸", 
     change: { week: "+2.5%", month: "+6.3%", year: "+20.1%" }, 
-    bgColor: "bg-gradient-to-br from-green-400 to-green-700" 
+    bgColor: "bg-gradient-to-bl from-green-400 to-green-700" 
   },
   { 
     id: '6', 
@@ -60,7 +60,7 @@ const statsData: StatCardType[] = [
     value: "$0.25M", 
     icon: "🛍️", 
     change: { week: "+0.01%", month: "+1.5%", year: "+5.6%" }, 
-    bgColor: "bg-gradient-to-tr from-pink-400 to-rose-500" 
+    bgColor: "bg-gradient-to-l from-[#429d5c] to-[#68ba7fe9]" 
   },
   { 
     id: '7', 
@@ -68,7 +68,7 @@ const statsData: StatCardType[] = [
     value: "85%", 
     icon: "📄", 
     change: { week: "90%", month: "78%", year: "71%" }, 
-    bgColor: "bg-gradient-to-tr from-[#F2C078] to-[#FF7D29]" 
+    bgColor: "bg-gradient-to-tl from-[#4dc9bf] to-[#073f40CC]" 
   },
 ];
 
@@ -85,7 +85,7 @@ const StatCard = ({ data }: StatCardProps) => {
     <div
       className={`
         ${data.bgColor}
-        text-white rounded-2xl shadow-md p-4 w-full relative
+        text-secondary-color rounded-2xl shadow-md p-4 w-full relative
         transition-transform duration-200
         hover:scale-100 hover:shadow-xl
         active:scale-95 active:shadow-md
@@ -107,37 +107,21 @@ const StatCard = ({ data }: StatCardProps) => {
       <div className="relative z-10">
         <div className="flex justify-between items-center mb-2">
           <div className="flex flex-col items-start">
-            <h2 className="font-medium">{data.title}</h2>
-            <span className="text-xl">{data.value}</span>
+            <h2 className="font-medium text-white">{data.title}</h2>
+            <span className="text-xl text-white">{data.value}</span>
           </div>
-          <div className="w-12 h-12 bg-gray-600/60 backdrop-blur-md rounded-xl border border-white/30 shadow-md flex items-center justify-center text-white text-2xl">
+          {/* <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-xl border border-white/30 shadow-md flex items-center justify-center text-white text-2xl">
             {data.icon}
-          </div>
+          </div> */}
         </div>
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-start mt-10 gap-2">
             <div>
-              {/* {typeof changeValue === "string" && (
-                <span className="w-12 h-12 bg-gray-600/60 backdrop-blur-md border border-white/30 shadow-md text-white py-1 px-3 rounded-lg">
-                  {changeValue}
-                </span>
-              )} */}
+        
             </div>
           </div>
           <div className="flex items-start mt-10">
-            {/* {hasTimeFrames && selectedFrame && onTimeFrameChange && (
-              <select
-                value={selectedFrame}
-                onChange={(e) => onTimeFrameChange(e.target.value as TimeFrame)}
-                className="text-sm bg-white/10 backdrop-blur-md border border-white/30 shadow-md px-2 py-0.5 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-white/50"
-              >
-                {TIME_FRAMES.map((frame) => (
-                  <option key={frame} value={frame} className="bg-gray-400/30 text-black border">
-                    {frame.charAt(0).toUpperCase() + frame.slice(1)}
-                  </option>
-                ))}
-              </select>
-            )} */}
+           
           </div>
         </div>
       </div>
@@ -147,12 +131,45 @@ const StatCard = ({ data }: StatCardProps) => {
 
 // --- StatsPanel Component ---
 const StatsPanel = () => {
-  // State for selected time frame (shared across all cards)
   const [selectedFrame, setSelectedFrame] = useState<TimeFrame>("month");
 
+  // Store dynamic unhedged exposure
+  const [unhedgedExposure, setUnhedgedExposure] = useState<string>("$0M");
+
+  useEffect(() => {
+    const fetchUnhedgedExposure = async () => {
+      try {
+        const res = await axios.get("https://backend-5n7t.onrender.com/api/exposureUpload/USDsum");
+
+        // Assume response structure is: { value: number } or similar
+        const rawValue = res.data?.totalUsd ?? 0; // Adjust this line if structure differs
+        const processed = rawValue / 1000000;
+        const totalHedgedExposure = 1.2312; // in M
+
+        const finalValue =processed- totalHedgedExposure;
+        setUnhedgedExposure(`$${finalValue.toFixed(2)}M`);
+      } catch (error) {
+        console.error("Failed to fetch unhedged exposure:", error);
+        setUnhedgedExposure("Error");
+      }
+    };
+
+    fetchUnhedgedExposure();
+  }, []);
+
+  const updatedStatsData: StatCardType[] = statsData.map((stat) => {
+    if (stat.title === "Total Unhedged Exposure") {
+      return {
+        ...stat,
+        value: unhedgedExposure,
+      };
+    }
+    return stat;
+  });
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-2 py-4 mr-3">
-      {statsData.map((stat) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-3 w-full">
+      {updatedStatsData.map((stat) => (
         <StatCard
           key={stat.id}
           data={stat}

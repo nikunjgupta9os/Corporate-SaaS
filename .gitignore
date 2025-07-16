@@ -1,3 +1,5 @@
 # Node modules (for backend and frontend)
 node_modules/
 **/node_modules/
+dist/
+**/dist/

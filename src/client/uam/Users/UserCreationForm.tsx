@@ -34,7 +34,7 @@ const UserCreationForm: React.FC = () => {
       .then(({ data }) => {
         const roles = data.roles.map((role: string) => role);
         setRoles(roles);
-        console.log(roles);
+        // console.log(roles);
       })
       .catch((error) => {
         console.error("Error fetching roles:", error);

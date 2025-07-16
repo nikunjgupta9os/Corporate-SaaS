@@ -139,15 +139,15 @@ const FXTickerCompact = () => {
               className="flex flex-col items-center w-16 flex-shrink-0"
             >
               <span
-                className={`text-sm text-secondary-text font-semibold leading-none ${color}`}
+                className={`text-[10px] text-secondary-text-dark font-normal leading-none ${color}`}
               >
                 {current.toFixed(4)}
               </span>
-              <span className="text-xs text-primary font-semibold leading-none">
+              <span className="text-[11px] pt-0.5 tracking-widest text-primary font-semibold leading-none">
                 {`${BASE}/${symbol}`}
               </span>
               <span
-                className={`text-xs text-secondary-text font-medium ${color} flex items-center gap-1`}
+                className={`text-[10px] text-secondary-text font-medium ${color} flex items-center gap-1`}
               >
                 {direction === "up" && <span>↑</span>}
                 {direction === "down" && <span>↓</span>}
@@ -176,7 +176,7 @@ const FXTickerCompact = () => {
   };
 
   return (
-    <div className="relative overflow-hidden h-14 w-full max-w-[410px] ml-6 my-2 rounded shadow-sm bg-secondary-color-lt z-40">
+    <div className="relative overflow-hidden h-14 w-full max-w-[410px] ml-6 my-2 rounded border border-border shadow-sm bg-secondary-color-lt z-40">
       {rows.map((row, idx) => renderRow(row, idx))}
       
       {/* Progress indicator */}

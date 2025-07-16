@@ -15,6 +15,7 @@ export const formatCurrency = (value: number): string => {
 };
 
 type CurrencyRow = {
+  bu: string;
   maturity: string;
   currency: string;
   payable: number;
@@ -34,6 +35,10 @@ const MaturityTable: React.FC<Props> = ({ maturity, rows, expanded, toggleExpand
   const navigate = useNavigate();
 
   const columns: ColumnDef<CurrencyRow>[] = [
+    {
+      header: "Business Unit",
+      accessorKey: "bu",
+    },
     {
       header: "Currency",
       accessorKey: "currency",
@@ -163,7 +168,10 @@ const MaturityTable: React.FC<Props> = ({ maturity, rows, expanded, toggleExpand
               ))}
               <tr className="bg-primary-lt shadow-md font-semibold">
                 <td className="px-3 py-2 text-secondary-text border border-border text-center">
-                  Total for {maturity}
+                  Total
+                </td>
+                <td className="px-3 py-2 text-secondary-text border border-border text-center">
+                  {maturity}
                 </td>
                 <td className="px-3 py-2 border border-border text-secondary-text ">
                   {formatCurrency(totals.payable)}

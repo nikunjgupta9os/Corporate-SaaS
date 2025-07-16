@@ -52,13 +52,13 @@ const DashboardDemo = () => {
   const regions = [...new Set(financeData.map(item => item.region))];
 
   return (
-    <div className="max-w-[778px] h-full mr-3 p-4 pb-6 border-2 border-blue-200 text-white rounded-lg">
+    <div className="w-full h-full mr-3 p-4 pb-6 border-2 border-primary-lg text-white rounded-lg">
       {/* Top Toolbar */}
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2">
           <button
             onClick={() => setShowFilters(prev => !prev)}
-            className="px-4 py-2 bg-blue-500 text-white rounded flex items-center gap-2 hover:bg-blue-600 transition"
+            className="px-4 py-2 bg-primary-lt text-white rounded flex items-center gap-2 hover:bg-primary transition"
           >
             <Filter size={18} />
             {showFilters ? 'Hide Filters' : 'Show Filters'}

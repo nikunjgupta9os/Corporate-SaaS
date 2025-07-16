@@ -17,7 +17,7 @@ export interface FinanceEntry {
 
 interface Warning {
   id: string;
-  type: 'critical' | 'warning' | 'info';
+  type: 'Critical' | 'Warning' | 'Info';
   title: string;
   message: string;
   icon: React.ComponentType<any>;
@@ -45,7 +45,7 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
     overdueDays: 7
   }
 }) => {
-  const [filterType, setFilterType] = useState<'all' | 'critical' | 'warning' | 'info'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'Critical' | 'Warning' | 'Info'>('all');
   const [sortBy, setSortBy] = useState<'severity' | 'date'>('severity');
   const [ignoredWarnings, setIgnoredWarnings] = useState<Set<string>>(new Set());
 
@@ -61,7 +61,7 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
         const daysLeft = Math.floor(entry.cashInBank / (entry.burnRate || 1));
         warningsList.push({
           id: `low-cash-${entryId}`,
-          type: 'critical',
+          type: 'Critical',
           title: 'Critical Cash Flow Alert',
           message: `Cash reserves critically low for ${entry.region}. Only ${daysLeft} days of operating cash remaining.`,
           icon: DollarSign,
@@ -76,7 +76,7 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
         const deficit = entry.expenses - entry.revenue;
         warningsList.push({
           id: `expense-exceed-${entryId}`,
-          type: 'critical',
+          type: 'Critical',
           title: 'Revenue Deficit Alert',
           message: `Operating expenses exceed revenue in ${entry.region}. Monthly deficit of $${deficit.toLocaleString()}.`,
           icon: TrendingDown,
@@ -90,7 +90,7 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
       if (entry.profit < 0) {
         warningsList.push({
           id: `negative-profit-${entryId}`,
-          type: 'warning',
+          type: 'Warning',
           title: 'Negative Profit Margin',
           message: `${entry.region} showing negative profit for ${entry.month}.`,
           icon: TrendingDown,
@@ -104,7 +104,7 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
       if (entry.dueAmount > thresholds.criticalDueAmount!) {
         warningsList.push({
           id: `high-dues-${entryId}`,
-          type: 'warning',
+          type: 'Warning',
           title: 'Outstanding Vendor Payments',
           message: `High pending vendor payments in ${entry.region}.`,
           icon: CreditCard,
@@ -122,7 +122,7 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
         const severity = daysPastDue > thresholds.overdueDays! ? 4 : 3;
         warningsList.push({
           id: `overdue-po-${entryId}`,
-          type: daysPastDue > thresholds.overdueDays! ? 'critical' : 'warning',
+          type: daysPastDue > thresholds.overdueDays! ? 'Critical' : 'Warning',
           title: 'Overdue Purchase Orders',
           message: `Purchase orders overdue by ${daysPastDue} days in ${entry.region}.`,
           icon: Clock,
@@ -137,7 +137,7 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
       if (expenseRatio > thresholds.highExpenseRatio! && expenseRatio <= 1) {
         warningsList.push({
           id: `high-expense-ratio-${entryId}`,
-          type: 'info',
+          type: 'Info',
           title: 'High Expense Ratio',
           message: `Expense ratio at ${(expenseRatio * 100).toFixed(1)}% in ${entry.region}.`,
           icon: FileText,
@@ -153,7 +153,7 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
         const daysLeft = Math.floor(entry.cashInBank / (entry.burnRate || 1));
         warningsList.push({
           id: `low-cash-buffer-${entryId}`,
-          type: 'info',
+          type: 'Info',
           title: 'Low Cash Buffer',
           message: `Cash buffer below recommended levels in ${entry.region}. ${daysLeft} days remaining.`,
           icon: DollarSign,
@@ -186,9 +186,9 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
 
   // Calculate counts from all warnings (not just filtered ones)
   const activeWarnings = allWarnings.filter(warning => !ignoredWarnings.has(warning.id));
-  const criticalCount = activeWarnings.filter(w => w.type === 'critical').length;
-  const warningCount = activeWarnings.filter(w => w.type === 'warning').length;
-  const infoCount = activeWarnings.filter(w => w.type === 'info').length;
+  const criticalCount = activeWarnings.filter(w => w.type === 'Critical').length;
+  const warningCount = activeWarnings.filter(w => w.type === 'Warning').length;
+  const infoCount = activeWarnings.filter(w => w.type === 'Info').length;
 
   const handleIgnoreWarning = (warningId: string) => {
     setIgnoredWarnings(prev => new Set([...prev, warningId]));
@@ -196,11 +196,11 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
 
   const getWarningStyles = (type: Warning['type']) => {
     switch (type) {
-      case 'critical':
+      case 'Critical':
         return 'border-red-500 bg-red-50 text-red-900';
-      case 'warning':
+      case 'Warning':
         return 'border-yellow-500 bg-yellow-50 text-yellow-900';
-      case 'info':
+      case 'Info':
         return 'border-blue-500 bg-blue-50 text-blue-900';
       default:
         return 'border-gray-300 bg-gray-50 text-gray-900';
@@ -209,11 +209,11 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
 
   const getIconStyles = (type: Warning['type']) => {
     switch (type) {
-      case 'critical':
+      case 'Critical':
         return 'text-red-600';
-      case 'warning':
+      case 'Warning':
         return 'text-yellow-600';
-      case 'info':
+      case 'Info':
         return 'text-blue-600';
       default:
         return 'text-gray-600';
@@ -221,7 +221,7 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
   };
 
   return (
-    <div className="max-w-[765px] border-2 border-red-200 rounded-xl p-4 bg-white h-[400px] flex flex-col">
+    <div className="w-full border-2 border-red-200 rounded-xl p-4 bg-white h-[400px] flex flex-col">
       <div className="mb-4 flex-shrink-0">
         <h2 className="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
           <AlertTriangle className="text-orange-600 h-5 w-5" />
@@ -232,18 +232,18 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
       {/* Filters and Sort */}
       <div className="flex flex-wrap gap-2 mb-4 flex-shrink-0">
         <div className="flex gap-1">
-          {(['all', 'critical', 'warning', 'info'] as const).map((type) => (
+          {(['all', 'Critical', 'Warning', 'Info'] as const).map((type) => (
             <button
               key={type}
               onClick={() => setFilterType(type)}
-              className={`px-2 py-1 rounded-full text-xs font-medium transition-colors ${
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                 filterType === type
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? 'bg-primary text-white'
+                  : 'bg-primary-xl text-gray-700 hover:bg-primary-lg border border-primary-lg'
               }`}
             >
               {type.charAt(0).toUpperCase() + type.slice(1)}
-              {type !== 'all' && ` (${type === 'critical' ? criticalCount : type === 'warning' ? warningCount : infoCount})`}
+              {type !== 'all' && ` (${type === 'Critical' ? criticalCount : type === 'Warning' ? warningCount : infoCount})`}
             </button>
           ))}
         </div>
@@ -251,7 +251,7 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value as 'severity' | 'date')}
-          className="px-2 py-1 border border-gray-300 rounded-md text-xs"
+          className="px-2 py-1 border border-primary-lg focus:outline-none rounded-md text-xs"
         >
           <option value="severity">Sort by Severity</option>
           <option value="date">Sort by Title</option>
@@ -289,21 +289,16 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-semibold text-sm">{warning.title}</h3>
                         <span className={`px-1.5 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${
-                          warning.type === 'critical' 
+                          warning.type === 'Critical' 
                             ? 'bg-red-100 text-red-700' 
-                            : warning.type === 'warning'
+                            : warning.type === 'Warning'
                             ? 'bg-yellow-100 text-yellow-700'
                             : 'bg-blue-100 text-blue-700'
                         }`}>
                           {warning.type}
                         </span>
                       </div>
-                      <p className="text-xs mb-2 leading-relaxed">{warning.message}</p>
-                      {warning.action && (
-                        <p className="text-xs font-medium opacity-75">
-                          Action: {warning.action}
-                        </p>
-                      )}
+                      <p className="text-xs mb-2">{warning.message}</p>
                     </div>
                   </div>
                   {warning.value && (
@@ -312,6 +307,13 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
                       <div className="text-xs opacity-75">
                         {warning.severity}/5
                       </div>
+                      {warning.action && (
+                        <div className='mt-2'>
+                          <p className="text-xs font-medium opacity-75">
+                            Action: {warning.action}
+                          </p>
+                          </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -323,7 +325,7 @@ const DueWarnings: React.FC<DueWarningsProps> = ({
 
       {/* Footer */}
       {filteredWarnings.length > 0 && (
-        <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg flex-shrink-0">
+        <div className="mt-4 p-3 bg-primary-xl border border-primary-lg rounded-lg flex-shrink-0">
           <p className="text-xs text-gray-600">
             <strong>Note:</strong> These alerts are generated based on your financial data. 
             Click the × to ignore warnings you've addressed.

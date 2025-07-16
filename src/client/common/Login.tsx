@@ -33,7 +33,7 @@ const Login: React.FC = () => {
     });
 
     const user = response.data.user;
-     console.log(user);
+
 
     if (user?.isLoggedIn) {
       // Store userId and email in localStorage

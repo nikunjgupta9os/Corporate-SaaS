@@ -84,7 +84,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ chartType, data, metric }
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey={metric} stroke="#8884d8" />
+            <Line type="monotone" dataKey={metric} stroke="#129990" />
           </LineChart>
         );
 
@@ -96,7 +96,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ chartType, data, metric }
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey={metric} fill="#8884d8" />
+            <Bar dataKey={metric} fill="#129990B3" />
           </BarChart>
         );
 
@@ -108,7 +108,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ chartType, data, metric }
             <YAxis />
             <Tooltip />
             <Legend />
-            <Area type="monotone" dataKey={metric} stroke="#8884d8" fill="#8884d8" />
+            <Area type="monotone" dataKey={metric} stroke="#129990" fill="#129990B3" />
           </AreaChart>
         );
 
@@ -130,7 +130,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ chartType, data, metric }
             <PolarGrid />
             <PolarAngleAxis dataKey="subject" />
             <PolarRadiusAxis />
-            <Radar name={metric} dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+            <Radar name={metric} dataKey="A" stroke="#129990B3" fill="#129990B3" fillOpacity={0.6} />
             <Legend />
           </RadarChart>
         );
@@ -141,7 +141,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ chartType, data, metric }
             <XAxis type="number" dataKey="x" name="Index" />
             <YAxis type="number" dataKey="y" name={metric} />
             <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-            <Scatter name={metric} data={scatterData} fill="#8884d8" />
+            <Scatter name={metric} data={scatterData} fill="#129990" />
           </ScatterChart>
         );
 
@@ -154,7 +154,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ chartType, data, metric }
             dataKey="value"
             nameKey="name"
             stroke="#fff"
-            fill="#8884d8"
+            fill="#129990"
           />
         );
 
@@ -165,7 +165,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ chartType, data, metric }
             <YAxis type="category" dataKey="name" />
             <Tooltip />
             <Legend />
-            <Bar dataKey="value" fill="#8884d8" />
+            <Bar dataKey="value" fill="#129990B3" />
           </BarChart>
         );
 
@@ -190,7 +190,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({ chartType, data, metric }
           >
             <RadialBar
               dataKey="value"
-              fill="#8884d8"
+              fill="#129990B3"
               label={{ position: 'insideStart', fill: '#000000' }}
             />
             <RLegend

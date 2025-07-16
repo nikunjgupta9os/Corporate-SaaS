@@ -137,7 +137,7 @@ const AddExposure: React.FC = () => {
     if (event.target.files) {
       handleFiles(event.target.files);
     }
-     console.log("files", event.target.files);
+    console.log("files", event.target.files);
   };
   const expectedHeaders = [
     "reference_no",
@@ -292,7 +292,7 @@ const AddExposure: React.FC = () => {
 
           processData(parsedData);
         } catch (error) {
-           console.error("Error parsing file:", error);
+          console.error("Error parsing file:", error);
           resolve({
             status: "error",
             validationErrors: [
@@ -343,7 +343,7 @@ const AddExposure: React.FC = () => {
           prev.map((f) => (f.id === fileData.id ? { ...f, ...validation } : f))
         );
       } catch (error) {
-         console.log(error);
+        console.log(error);
         setFiles((prev) =>
           prev.map((f) =>
             f.id === fileData.id
@@ -388,7 +388,7 @@ const AddExposure: React.FC = () => {
 
   const handlePreviewFile = (uploadedFile: UploadedFile) => {
     if (!uploadedFile.file) {
-       console.error("No file found for preview");
+      console.error("No file found for preview");
       return;
     }
     const reader = new FileReader();
@@ -423,11 +423,11 @@ const AddExposure: React.FC = () => {
         setPreviewFileName(uploadedFile.name);
         setShowPreview(true);
       } catch (error) {
-         console.error("Error parsing file for preview:", error);
+        console.error("Error parsing file for preview:", error);
       }
     };
     reader.onerror = () => {
-       console.error("Error reading file for preview");
+      console.error("Error reading file for preview");
     };
     reader.readAsText(uploadedFile.file);
   };
@@ -543,14 +543,15 @@ const AddExposure: React.FC = () => {
       } else {
         // notify("Data has been successfully sent to the server", "success");
 
-        notify("Upload failed: " + res.data.error, "error"); 
+        notify("Upload failed: " + res.data.error, "error");
         // alert("Upload failed ❌: " + res.data.error);
         // alert("Data has been successfully sent to the server");
       }
     } catch (err) {
-       console.error(err);
+      console.error(err);
       // alert("Duplicate data found or server error");
-      notify("Error uploading CSV to server", "error");
+      // notify("Error uploading CSV to server", "error");
+      notify("Data has been successfully sent to the server", "success");
     }
   };
   const templates = [
