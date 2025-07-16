@@ -62,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       label: "Dashboard",
       icon: <FileBarChart />,
       subItems: [
-        // { label: "CFO Dashboard", path: "/cfo-dashboard", icon: <ChartArea /> },
+        { label: "CFO Dashboard", path: "/cfo-dashboard", icon: <ChartArea /> },
         { label: "FX Ops Dashboard", path: "/ops-dashboard", icon: <SquareChartGantt /> },
       ],
     },
