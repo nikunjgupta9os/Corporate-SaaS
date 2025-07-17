@@ -7,7 +7,8 @@ import Input from '../../components/Input';
 import Button from '../ui/Button';
 import type { LoginSchemaType } from './validation/loginScehma';
 import { loginSchema } from './validation/loginScehma';
-import loginImage from '../../assets/logo2.png';
+import loginImage from '../../public/assets/logo2.png';
+import loginBackground from '../../public/assets/login.png';
 
 const Login: React.FC = () => {
   const [bgColor, setBgColor] = useState('via-purple-300');
@@ -43,7 +44,7 @@ const Login: React.FC = () => {
       localStorage.setItem("userEmail", user.email);
 
       setBgColor('via-green-100');
-      navigate('/role', { state: { user } });
+      navigate('/cfo-dashboard', { state: { user } });
     } else {
       setLoginError('Unexpected login response');
     }
@@ -68,12 +69,13 @@ const Login: React.FC = () => {
 
   return (
   <div className="flex items-start justify-end min-h-screen bg-white pt-64 pr-10"
-    style={{
-      backgroundImage: 'url("/src/assets/login.png")',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-    }}
+   style={{
+  backgroundImage: `url(${loginBackground})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+}}
+
     >
       <div className='relative -left-24'>
         <img src={loginImage} className='max-w-5xl' alt="Login" />

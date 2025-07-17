@@ -19,6 +19,7 @@ import {
   FileBarChart,
   SquareChartGantt,
   ChartArea,
+  BarChart2,
 } from "lucide-react";
 
 import "../styles/theme.css";
@@ -68,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       ],
     },
     { label: "Exposure Upload", path: "/exposure-upload", icon: <Upload /> },
-    // { label: "Exposure Bucketing", path: "/exposure-bucketing", icon: <BarChart2 /> },
+    { label: "Exposure Bucketing", path: "/exposure-bucketing", icon: <BarChart2 /> },
     { label: "Hedging Proposal", path: "/hedging-proposal", icon: <FileText /> },
     { label: "Hedging Dashboard", path: "/hedging-dashboard", icon: <LayoutDashboard /> },
     { label: "FX Forward Booking", path: "/fxbooking", icon: <CheckCircle /> },
