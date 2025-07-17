@@ -231,7 +231,7 @@ const TableContent: React.FC<{
       }
       // alert("Selected role permissions approved successfully.");
       notify("Selected role permissions approved successfully.", "success");
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       //  console.error("Error approving role permissions:", error);
       // alert("Failed to approve role permissions.");
@@ -258,7 +258,7 @@ const TableContent: React.FC<{
       }
       // alert("Selected role permissions rejected successfully.");
       notify("Selected role permissions rejected successfully.", "success");
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       //  console.error("Error rejecting role permissions:", error);
       // alert("Failed to reject role permissions.");
