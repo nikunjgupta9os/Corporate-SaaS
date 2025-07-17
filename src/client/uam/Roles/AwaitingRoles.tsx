@@ -528,7 +528,7 @@ const AwaitingApproval: React.FC = () => {
   const defaultVisibility: Record<string, boolean> = {
     srNo: true,
     select: true,
-    id: true,
+    id: false,
     name: true,
     role_code: false,
     description: true,
