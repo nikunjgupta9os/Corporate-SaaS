@@ -96,7 +96,7 @@ const FXForwardBookingForm: React.FC = () => {
                       ].map((item, idx) => {
                         const isNegative = parseFloat(item.value) < 0;
                         const isDifferenceRow = idx === 6;
-                        const formattedValue = `${item.value}M`; // Add 'M' suffix
+                        const formattedValue = `${item.value}`; // Add 'M' suffix
 
                         return (
                           <tr
