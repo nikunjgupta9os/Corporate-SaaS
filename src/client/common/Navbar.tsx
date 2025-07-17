@@ -2,7 +2,7 @@
 
 import "../styles/theme.css";
 import { motion } from "framer-motion";
-import loginImage from "../../assets/logos.png";
+import loginImage from "../../public/assets/logos.png";
 import React, { useEffect, useState, useRef } from "react";
 import {
   Home,
@@ -13,7 +13,6 @@ import {
   User,
   Mail,
   Calendar,
-  Settings,
 } from "lucide-react";
 import axios from "axios";
 import FXTickerPro from "./FXTickerPro";
