@@ -82,8 +82,8 @@ const ExposureUpload = () => {
           className={`
             flex items-center space-x-2 px-6 py-3 text-sm font-medium rounded-t-lg border-b-2 transition-all duration-200
             ${isActiveTab(tab.id)
-              ? 'bg-primary text-white border-green-700 shadow-sm'
-              : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:text-gray-800'
+              ? "bg-primary-lt text-white border-primary shadow-sm"
+            : "bg-body-hover text-secondary-text border-body-hover hover:bg-body-active hover:text-primary"
             }
           `}
         >
@@ -102,7 +102,7 @@ const ExposureUpload = () => {
   return (
     <Layout title="Exposure Upload & Approval Dashboard" showButton={false}>
       <div className="mb-6 pt-4">
-        <div className="flex space-x-1 border-b border-gray-200">
+        <div className="flex space-x-1 border-b border-primary-lg">
           {tabButtons}
         </div>
       </div>

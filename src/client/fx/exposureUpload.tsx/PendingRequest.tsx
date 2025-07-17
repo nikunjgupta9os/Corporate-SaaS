@@ -606,7 +606,7 @@ const AllExposureRequest: React.FC = () => {
         <div className="flex flex-col space-y-2">
           <label className="text-sm font-medium text-gray-700">Status</label>
           <select
-            className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#129990]"
+            className="border border-border rounded-md px-3 py-2 focus:outline-none bg-secondary-color-lt text-secondary-text"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -625,15 +625,15 @@ const AllExposureRequest: React.FC = () => {
         <div className="flex items-center justify-end gap-4">
           <button
             type="button"
-            className="flex items-center justify-center border border-[#129990] rounded-lg px-2 h-10 text-sm hover:bg-[#e6f7f5] transition"
+            className="flex items-center justify-center border border-border rounded-lg px-2 h-10 text-sm  transition"
             title="Download All Roles"
             onClick={() => exportToExcel(filteredData, "All_Roles")}
           >
-            <Upload className="flex item-center justify-center text-[#129990]" />
+            <Download className="flex item-center justify-center text-primary" />
           </button>
           <button
             type="button"
-            className="flex items-center justify-center border border-[#129990] rounded-lg w-10 h-10 hover:bg-[#e6f7f5] transition"
+            className="flex items-center justify-center border border-border rounded-lg w-10 h-10 transition"
             title="Refresh"
             onClick={() => window.location.reload()}
           >
@@ -641,11 +641,12 @@ const AllExposureRequest: React.FC = () => {
               width="20"
               height="20"
               fill="none"
-              stroke="#129990"
+              stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
               viewBox="0 0 24 24"
+              className="text-primary"
             >
               <path d="M23 4v6h-6" />
               <path d="M1 20v-6h6" />
@@ -659,13 +660,13 @@ const AllExposureRequest: React.FC = () => {
             <input
               type="text"
               placeholder="Search"
-              className="pl-4 pr-10 py-2 border border-[#129990] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#129990]/30 min-w-full"
+              className="pl-4 pr-10 py-2 border border-border rounded-lg focus:outline-none bg-secondary-color-lt text-secondary-text-dark min-w-full"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-[#129990]"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-primary"
               tabIndex={-1}
               aria-label="Search"
             >
@@ -673,11 +674,12 @@ const AllExposureRequest: React.FC = () => {
                 width="18"
                 height="18"
                 fill="none"
-                stroke="#129990"
+                stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 viewBox="0 0 24 24"
+                className="text-primary"
               >
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />

@@ -352,14 +352,13 @@
     return (
       // <Layout title="K">
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold mb-4">All Exposures</h2>
 
         <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Status Filter */}
           <div className="flex flex-col space-y-2">
-            <label className="text-sm font-medium text-gray-700">Status</label>
+            <label className="text-sm font-medium text-secondary-text-dark">Status</label>
             <select
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#129990]"
+              className="border border-border bg-secondary-color-lt text-secondary-text rounded-md px-3 py-2 focus:outline-none"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >

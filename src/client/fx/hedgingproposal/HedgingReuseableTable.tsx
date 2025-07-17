@@ -768,7 +768,7 @@ function NyneOSTable<HedgingProposal extends WithId>({
 
   return (
     <>
-      <div className="flex items-center justify-end py-4">
+      <div className="flex items-center justify-end pt-4">
         <div className="flex items-center gap-2 min-w-[12rem]">
           <Button onClick={() => table.setColumnVisibility({})}>Submit</Button>
         </div>

@@ -260,7 +260,7 @@ const AllUsers: React.FC = () => {
               <input
                 type="number"
                 defaultValue={value}
-                className="w-24 px-2 py-1 border rounded text-sm"
+                className="w-24 px-2 py-1 rounded text-sm text-secondary-text bg-secondary-color border border-border"
                 onBlur={(e) => {
                   const newValue = Number(e.target.value);
                   if (newValue !== value) {
@@ -271,7 +271,7 @@ const AllUsers: React.FC = () => {
                   }
                 }}
               />
-              <span className="block text-xs text-gray-500 mt-1">
+              <span className="block text-xs text-secondary-text-dark mt-1">
                 Old: {oldValue}
               </span>
             </div>
@@ -292,7 +292,7 @@ const AllUsers: React.FC = () => {
               <input
                 type="number"
                 defaultValue={value}
-                className="w-24 px-2 py-1 border rounded text-sm"
+                className="w-24 px-2 py-1 rounded text-sm text-secondary-text bg-secondary-color border border-border"
                 onBlur={(e) => {
                   const newValue = Number(e.target.value);
                   if (newValue !== value) {
@@ -303,7 +303,7 @@ const AllUsers: React.FC = () => {
                   }
                 }}
               />
-              <span className="block text-xs text-gray-500 mt-1">
+              <span className="block text-xs text-secondary-text-dark mt-1">
                 Old: {oldValue}
               </span>
             </div>
@@ -324,7 +324,7 @@ const AllUsers: React.FC = () => {
               <input
                 type="number"
                 defaultValue={value}
-                className="w-24 px-2 py-1 border rounded text-sm"
+                className="w-24 px-2 py-1 rounded text-sm text-secondary-text bg-secondary-color border border-border"
                 onBlur={(e) => {
                   const newVal = Number(e.target.value);
                   if (newVal !== value) {
@@ -335,7 +335,7 @@ const AllUsers: React.FC = () => {
                   }
                 }}
               />
-              <span className="block text-xs text-gray-500 mt-1">
+              <span className="block text-xs text-secondary-text-dark mt-1">
                 Old: {oldValue}
               </span>
             </div>
@@ -356,7 +356,7 @@ const AllUsers: React.FC = () => {
               <input
                 type="number"
                 defaultValue={value}
-                className="w-24 px-2 py-1 border rounded text-sm"
+                className="w-24 px-2 py-1 rounded text-sm text-secondary-text bg-secondary-color border border-border"
                 onBlur={(e) => {
                   const newVal = Number(e.target.value);
                   if (newVal !== value) {
@@ -367,7 +367,7 @@ const AllUsers: React.FC = () => {
                   }
                 }}
               />
-              <span className="block text-xs text-gray-500 mt-1">
+              <span className="block text-xs text-secondary-text-dark mt-1">
                 Old: {oldValue}
               </span>
             </div>
@@ -387,7 +387,7 @@ const AllUsers: React.FC = () => {
               <input
                 type="number"
                 defaultValue={value}
-                className="w-24 px-2 py-1 border rounded text-sm"
+                className="w-24 px-2 py-1 rounded text-sm text-secondary-text bg-secondary-color border border-border"
                 onBlur={(e) => {
                   const newVal = Number(e.target.value);
                   if (newVal !== value) {
@@ -398,7 +398,7 @@ const AllUsers: React.FC = () => {
                   }
                 }}
               />
-              <span className="block text-xs text-gray-500 mt-1">
+              <span className="block text-xs text-secondary-text-dark mt-1">
                 Old: {oldValue}
               </span>
             </div>
@@ -418,7 +418,7 @@ const AllUsers: React.FC = () => {
               <input
                 type="number"
                 defaultValue={value}
-                className="w-24 px-2 py-1 border rounded text-sm"
+                className="w-24 px-2 py-1 rounded text-sm text-secondary-text bg-secondary-color border border-border"
                 onBlur={(e) => {
                   const newVal = Number(e.target.value);
                   if (newVal !== value) {
@@ -429,7 +429,7 @@ const AllUsers: React.FC = () => {
                   }
                 }}
               />
-              <span className="block text-xs text-gray-500 mt-1">
+              <span className="block text-xs text-secondary-text-dark mt-1">
                 Old: {oldValue}
               </span>
             </div>
@@ -618,14 +618,14 @@ const AllUsers: React.FC = () => {
         cell: (info) => {
           const status = info.getValue() as string;
           const statusColors: Record<string, string> = {
-            Approved: "bg-green-100 text-green-800",
-            Pending: "bg-yellow-100 text-yellow-800",
-            Rejected: "bg-red-100 text-red-800",
-            Draft: "bg-gray-100 text-gray-700",
+            Approved: "bg-green-100 text-green-800 border-green-400",
+            Pending: "bg-yellow-100 text-yellow-800 border-yellow-400",
+            Rejected: "bg-red-100 text-red-800 border-red-400",
+            Draft: "bg-gray-200 text-gray-700 border-gray-400",
           };
           return (
             <span
-              className={`px-2 py-1 text-xs font-medium rounded-full ${
+              className={`px-3 py-1 text-xs border font-medium rounded-full ${
                 statusColors[status] || "bg-gray-200 text-gray-600"
               }`}
             >
@@ -699,8 +699,6 @@ const AllUsers: React.FC = () => {
   return (
     <>
       <div className="space-y-6">
-       
-        <h2 className="text-2xl font-bold mb-4">All Hedging Proposals</h2>
 
         {/* Define the Table Data */}
         <NyneOSTable 
