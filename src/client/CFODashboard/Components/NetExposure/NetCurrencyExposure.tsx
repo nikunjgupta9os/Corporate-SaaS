@@ -40,7 +40,7 @@ const CurrencyExposure = () => {
     <div 
     className="w-full h-full bg-gradient-to-br from-[#129990E6] to-teal-500 rounded-xl shadow-lg p-4 text-white relative overflow-hidden
       transition duration-200 ease-in-out
-      hover:shadow-lg hover:scale-[1.02] hover:bg-opacity-90">
+      hover:shadow-lg hover:scale-[1] hover:bg-opacity-90">
       {/* Grid Background */}
       <div className="absolute inset-0 opacity-10">
         <svg
