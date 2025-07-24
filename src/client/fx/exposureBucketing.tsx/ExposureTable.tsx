@@ -329,18 +329,25 @@
     ) => {
       try {
         console.log("Updating row:", rowId, "with changes:", changes);
-
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Update local state
-        setData((prevData) =>
-          prevData.map((item) =>
-            item.id === rowId ? { ...item, ...changes } : item
-          )
-        );
-
-        return true;
+        const response = await fetch(`https://backend-5n7t.onrender.com/api/exposureBucketing/${rowId}/edit`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: rowId, ...changes }),
+        });
+        const result = await response.json();
+        if (response.ok && result.success) {
+          setData((prevData) =>
+            prevData.map((item) =>
+              item.reference_no === rowId
+                ? { ...item, ...{ ...result.updated, reference_no: item.reference_no } }
+                : item
+            )
+          );
+          return true;
+        } else {
+          console.error("Failed to update row:", result.error || result);
+          return false;
+        }
       } catch (error) {
         console.error("Error updating:", error);
         return false;
