@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
     const userId = localStorage.getItem("userId");
 
     try {
-      await axios.post("http://localhost:3143/api/auth/logout", { userId });
+      await axios.post("https://backend-5n7t.onrender.com/api/auth/logout", { userId });
 
       // Clear localStorage
       localStorage.removeItem("userId");
@@ -102,7 +102,7 @@ const Navbar: React.FC = () => {
     try {
       const timestamp = new Date().getTime();
       const response = await axios.get(
-        `http://localhost:3143/api/getuserdetails/${userId}?t=${timestamp}`
+        `https://backend-5n7t.onrender.com/api/getuserdetails/${userId}?t=${timestamp}`
       );
 
       if (response.data.success && response.data.sessions?.length > 0) {
