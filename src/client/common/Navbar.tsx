@@ -19,8 +19,6 @@ import FXTickerPro from "./FXTickerPro";
 import ThemeToggle from "./ThemeToggle";
 import { useNavigate } from "react-router-dom";
 
-const API_URL =
-  "https://api.currencyfreaks.com/v2.0/rates/latest?apikey=0df8d84cd09c21218e46c6f3ab";
 const CURRENCIES_TO_SHOW = ["INR", "EUR", "GBP", "JPY", "AUD"];
 
 // Mock notification data
@@ -63,7 +61,7 @@ const Navbar: React.FC = () => {
     const userId = localStorage.getItem("userId");
 
     try {
-      await axios.post("https://backend-5n7t.onrender.com/api/auth/logout", { userId });
+      await axios.post("http://localhost:3143/api/auth/logout", { userId });
 
       // Clear localStorage
       localStorage.removeItem("userId");
@@ -104,7 +102,7 @@ const Navbar: React.FC = () => {
     try {
       const timestamp = new Date().getTime();
       const response = await axios.get(
-        `https://backend-5n7t.onrender.com/api/getuserdetails/${userId}?t=${timestamp}`
+        `http://localhost:3143/api/getuserdetails/${userId}?t=${timestamp}`
       );
 
       if (response.data.success && response.data.sessions?.length > 0) {
@@ -151,23 +149,38 @@ const Navbar: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchRates = async () => {
-      try {
-        const { data } = await axios.get(API_URL);
-        const newRates: Record<string, number> = {};
-        CURRENCIES_TO_SHOW.forEach((currency) => {
-          newRates[currency] = parseFloat(data.rates[currency]);
-        });
-        prevRates.current = rates;
-        setRates(newRates);
-      } catch (error) {
-         console.error("Failed to fetch rates", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchRates = async () => {
+  //     try {
+  //       const { data } = await axios.get(API_URL);
+  //       const newRates: Record<string, number> = {};
+  //       CURRENCIES_TO_SHOW.forEach((currency) => {
+  //         newRates[currency] = parseFloat(data.rates[currency]);
+  //       });
+  //       prevRates.current = rates;
+  //       setRates(newRates);
+  //     } catch (error) {
+  //        console.error("Failed to fetch rates", error);
+  //     }
+  //   };
+  //
+  //   fetchRates();
+  //   const interval = setInterval(fetchRates, 15000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
-    fetchRates();
-    const interval = setInterval(fetchRates, 15000);
+  // Use only mock data for rates
+  useEffect(() => {
+    const generateMockRates = () => {
+      const mockRates: Record<string, number> = {};
+      CURRENCIES_TO_SHOW.forEach((currency) => {
+        mockRates[currency] = 60 + Math.random() * 80; // random value for demo
+      });
+      prevRates.current = rates;
+      setRates(mockRates);
+    };
+    generateMockRates();
+    const interval = setInterval(generateMockRates, 15000);
     return () => clearInterval(interval);
   }, []);
 
