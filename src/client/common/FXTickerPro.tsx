@@ -23,49 +23,20 @@ const FXTickerCompact = () => {
 
   const rowCount = 2;
   const rowSize = 5; // 5 currencies per row for better display
-  const API_KEY = "7e7d6d0df8d84cd09c21218e46c6f3ab";
-  const fetchRates = async () => {
-    try {
-      const res = await fetch(
-        `https://api.currencyfreaks.com/v2.0/rates/latest?apikey=${API_KEY}`
-      );
-      const data = await res.json();
 
-      const updatedRates: Record<string, RateData> = {};
-      CURRENCIES.forEach((symbol) => {
-        const current = parseFloat(data.rates[symbol]);
-        const prev = rates[symbol]?.current || current;
-        const diff = current - prev;
-        const percentChange = prev !== 0 ? ((diff) / prev) * 100 : 0;
-        let direction: "up" | "down" | "neutral" = "neutral";
-        if (percentChange > 0.01) direction = "up";
-        else if (percentChange < -0.01) direction = "down";
-
-        updatedRates[symbol] = {
-          current,
-          previous: prev,
-          percentChange,
-          direction,
-        };
-      });
-
-      setRates(updatedRates);
-    } catch (err) {
-       console.error("FX API Error:", err);
-      // Fallback mock data for demo
-      const mockRates: Record<string, RateData> = {};
-      CURRENCIES.forEach((symbol, index) => {
-        const current = 1 + Math.random() * 100;
-        const percentChange = (Math.random() - 0.5) * 10;
-        mockRates[symbol] = {
-          current,
-          previous: current,
-          percentChange,
-          direction: percentChange > 0.01 ? "up" : percentChange < -0.01 ? "down" : "neutral",
-        };
-      });
-      setRates(mockRates);
-    }
+  const generateMockRates = () => {
+    const mockRates: Record<string, RateData> = {};
+    CURRENCIES.forEach((symbol) => {
+      const current = 1 + Math.random() * 100;
+      const percentChange = (Math.random() - 0.5) * 10;
+      mockRates[symbol] = {
+        current,
+        previous: current,
+        percentChange,
+        direction: percentChange > 0.01 ? "up" : percentChange < -0.01 ? "down" : "neutral",
+      };
+    });
+    setRates(mockRates);
   };
 
   const triggerTransition = () => {
@@ -79,8 +50,8 @@ const FXTickerCompact = () => {
   };
 
   useEffect(() => {
-    fetchRates();
-    const intervalFetch = setInterval(fetchRates, 15000);
+    generateMockRates();
+    const intervalFetch = setInterval(generateMockRates, 15000);
     return () => clearInterval(intervalFetch);
   }, []);
 
