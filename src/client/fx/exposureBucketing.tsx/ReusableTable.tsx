@@ -71,12 +71,7 @@ import { useNotification } from "../../Notification/Notification.tsx";
     const [editValues, setEditValues] = useState<Partial<ExposureBucketing>>({});
     const [isSaving, setIsSaving] = useState(false);
 
-    // const handleChange = (key: keyof ExposureBucketing, value) => {
-    //   setEditValues((prev) => ({
-    //     ...prev,
-    //     [key]: value,
-    //   }));
-    // };
+    
     const handleChange = (key: keyof ExposureBucketing, value) => {
   setEditValues((prev) => ({
     ...prev,
@@ -175,7 +170,7 @@ import { useNotification } from "../../Notification/Notification.tsx";
             const response = await fetch(`https://backend-5n7t.onrender.com/api/exposureBucketing/${row.original.id}/edit`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ reference_no: row.original.id, ...changedFields }),
+              body: JSON.stringify({ id: row.original.id, ...changedFields }),
             });
             const result = await response.json();
             success = response.ok && result.success;
@@ -337,7 +332,7 @@ import { useNotification } from "../../Notification/Notification.tsx";
             )
           ) : (
             config.customRenderPerField?.[key]
-              ? (config.customRenderPerField[key](row as any) || <span className="text-secondary-text">—</span>)
+              ? (config.customRenderPerField[key](row as any) || <span className="text-secondary-text">—</span>) // eslint-disable-line
               : (
                 <span className="font-medium text-primary-lt">
                   {String(value ?? "—")}
