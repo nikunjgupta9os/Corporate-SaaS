@@ -402,7 +402,7 @@ function NyneOSTable<T extends EditableRowData>({
         setRowSelection({}); // Clear selection
 
         // alert(`${selectedUserIds.length} item(s) approved successfully`);
-        notify(`${selectedUserIds.length} item(s) approved successfully`, "success");
+        notify(`${selectedUserIds.length} item(s) deleted successfully`, "success");
       } else {
         throw new Error(response.data.message || "Delete failed");
       }
