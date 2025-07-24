@@ -25,8 +25,22 @@ const UserCreationForm: React.FC = () => {
   const [roles, setRoles] = useState<string[]>([]);
   const [formError, setFormError] = useState("");
   const [timeError, setTimeError] = useState("");
+  const [businessUnits, setBusinessUnits] = useState<string[]>([]);
+
   // const [form, setForm] = useState<FormData[]>([]);
   console.log("Form data:", formError, timeError);
+  useEffect(() => {
+  axios
+    .get("https://backend-5n7t.onrender.com/api/entity/names")
+    .then(({ data }) => {
+      setBusinessUnits(data); // assuming response is already an array of strings
+    })
+    .catch((err) => {
+      console.error("Error fetching entity names:", err);
+    });
+}, []);
+
+
 
   useEffect(() => {
     axios
@@ -221,11 +235,22 @@ const UserCreationForm: React.FC = () => {
 
             <div>
               <label className="text-secondary-text">Business Unit Name</label>
-              <input
-                type="text"
-                {...register("businessUnitName")}
-                className="w-full p-2 border rounded text-secondary-text bg-secondary-color-lt border-border"
-              />
+              <select
+  {...register("businessUnitName", {
+    required: "Please select a business unit.",
+  })}
+  className="w-full p-2 border rounded text-secondary-text bg-secondary-color-lt border-border"
+>
+  <option value="" disabled hidden selected>
+    Select Business Unit
+  </option>
+  {businessUnits.map((bu, index) => (
+    <option key={index} value={bu}>
+      {bu}
+    </option>
+  ))}
+</select>
+
             </div>
 
             <div className="col-span-2 flex justify-end gap-4 mt-4">
