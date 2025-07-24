@@ -9,8 +9,13 @@ import {
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Layout from "../common/Layout";
-
-type ApprovalStatus = "pending" | "approved" | "rejected";
+import LoadingSpinner from "../ui/LoadingSpinner";
+// import { set } from "date-fns";
+import { useNotification } from "../Notification/Notification.tsx";
+// import { no } from "zod/v4/locales";
+import Button from "../ui/Button.tsx";
+const cURL = "https://backend-5n7t.onrender.com/api"
+type ApprovalStatus = "pending" | "approved" | "rejected" | "delete-approval";
 
 interface TreeNodeData {
   entity_id: string;
@@ -87,34 +92,69 @@ const getNodeConfig = (level: string) => {
 
 const HierarchicalTree = () => {
   const [treeData, setTreeData] = useState<TreeNodeType | null>();
+  const [approvalComment, setApprovalComment] = useState("");
   const [isAllExpanded, setIsAllExpanded] = useState(true);
   const [selectedNode, setSelectedNode] = useState<TreeNodeType | null>(null);
 
-  // Load from localStorage on mount
+  const [loading, setLoading] = useState(true); // 👈 Loading state
+  
+  const {notify} = useNotification();
+
   useEffect(() => {
-    // const saved = localStorage.getItem("treeData");
-    // if (saved) {
-    //   setTreeData(JSON.parse(saved));
-    // } else {
-      const syncAndFetchHierarchy = async () => {
-        try {
-          await axios.post(
-            "https://backend-5n7t.onrender.com/api/entity/sync-relationships"
-          );
-          const response = await axios.get(
-            "https://backend-5n7t.onrender.com/api/entity/hierarchy"
-          );
-          setTreeData(response.data);
-        } catch (error) {
-           console.error("❌ Error syncing or fetching hierarchy:", error);
-          // Fallback mock data
-          // setTreeData(response.data);
-        }
-      };
-      syncAndFetchHierarchy();
-    }
-  // }
-  , []);
+    const syncAndFetchHierarchy = async () => {
+      console.log("🔄 Syncing and fetching hierarchy...");
+      try {
+        await axios.post(
+          `${cURL}/entity/sync-relationships`
+        );
+        const response = await axios.get(
+          `${cURL}/entity/hierarchy`
+        );
+
+        console.log("✅ Hierarchy synced and fetched successfully");
+        setTreeData(response.data);
+      } catch (error) {
+        console.error("❌ Error syncing or fetching hierarchy:", error);
+      } finally {
+        setLoading(false); // ✅ Stop loading after request
+      }
+    };
+
+    syncAndFetchHierarchy();
+  }, []);
+
+  // Load from localStorage on mount
+  // useEffect(() => {
+  //   // const saved = localStorage.getItem("treeData");
+  //   // if (saved) {
+  //   //   setTreeData(JSON.parse(saved));
+  //   console.log("🔄 Loading hierarchy from localStorage...");
+  //   // } else {
+  //     const syncAndFetchHierarchy = async () => {
+  //       console.log("🔄 Syncing and fetching hierarchy...");
+  //       try {
+  //         await axios.post(
+  //           "https://backend-5n7t.onrender.com/api/entity/sync-relationships"
+  //         );
+  //         const response = await axios.get(
+  //           "https://backend-5n7t.onrender.com/api/entity/hierarchy"
+  //         );
+
+  //         console.log("✅ Hierarchy synced and fetched successfully");
+  //         setTreeData(response.data);
+
+  //       } catch (error) {
+
+  //          console.error("❌ Error syncing or fetching hierarchy:", error);
+  //         // Fallback mock data
+  //         // setTreeData(response.data);
+  //       }
+  //     };
+  //     syncAndFetchHierarchy();
+
+  //   }
+  // // }
+  // , []);
 
   // Save to localStorage whenever treeData changes
   useEffect(() => {
@@ -184,6 +224,8 @@ const HierarchicalTree = () => {
     if (treeData && selectedNode) {
       const node = findNodeByIdUniversal(treeData, selectedNode.id);
       setSelectedNode(node || null);
+      // console.log("🔍 Selected node updated:", node);
+      // console.log("🔄 Expanded nodes:", selectedNode.id);
     }
   }, [treeData, selectedNode?.id]);
 
@@ -293,7 +335,13 @@ const HierarchicalTree = () => {
   // };
 
   // Component for rendering node details
-  const TreeNodeDetails = ({ node }: { node: TreeNodeType }) => {
+  const TreeNodeDetails = ({
+    node,
+    onUpdateNode,
+  }: {
+    node: TreeNodeType;
+    onUpdateNode: (updatedData: TreeNodeType["data"]) => void;
+  }) => {
     const isLevel1 = node.data.level === "Level 1";
     // const config = getNodeConfig(node.data.level);
     const [editing, setEditing] = useState(false);
@@ -311,22 +359,80 @@ const HierarchicalTree = () => {
       setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSave = () => {
-      // You can add logic to update the node in the tree here
-      setEditing(false);
-      // Optionally, call a prop or context to update the treeData
+    const handleSave = async () => {
+      try {
+        const payload = {
+          // entity_name: formData.entity_name,
+          // parentname: formData.parentname || "",
+          address: formData.address || "",
+          contact_phone: formData.contact_phone || "",
+          contact_email: formData.contact_email || "",
+          registration_number: formData.registration_number || "",
+          pan_gst: formData.pan_gst || "",
+          legal_entity_identifier: formData.legal_entity_identifier || "",
+          tax_identification_number: formData.tax_identification_number || "",
+          default_currency: formData.default_currency || "",
+          associated_business_units: formData.associated_business_units || "",
+          reporting_currency: formData.reporting_currency || "",
+          unique_identifier: formData.unique_identifier || "",
+          legal_entity_type: formData.legal_entity_type || "",
+          fx_trading_authority: formData.fx_trading_authority || "",
+          internal_fx_trading_limit: formData.internal_fx_trading_limit || "",
+          associated_treasury_contact:
+            formData.associated_treasury_contact || "",
+          // entity: node.data.entity_id, // Use correct field here from TreeNodeData
+        };
+
+        const response = await fetch(
+          `https://backend-5n7t.onrender.com/api/entity/update/${node.data.entity_id}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("Entity updated successfully:", result);
+        notify("Entity updated successfully!", "success");
+        onUpdateNode({ ...formData });
+
+        setEditing(false);
+      } catch (error) {
+        console.error("Error updating entity:", error);
+        notify(
+          "Failed to update entity. Please check your input or try again later.","error"
+        );
+      }
     };
+
+    // const handleSave = () => {
+    //   // You can add logic to update the node in the tree here
+    //   setEditing(false);
+    //   // Optionally, call a prop or context to update the treeData
+    // };
 
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">{node.name} Details</h2>
-          <button
+          {/* <button
             className="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 text-sm"
             onClick={() => setEditing((prev) => !prev)}
           >
             {editing ? "Cancel" : "Edit"}
-          </button>
+          </button> */}
+          <div className="w-[5rem] flex justify-end">
+            <Button categories="Medium" onClick={() => setEditing((prev) => !prev)}>
+            {editing ? "Cancel" : "Edit"}
+          </Button>
+          </div>
         </div>
         {editing ? (
           <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -723,6 +829,98 @@ const HierarchicalTree = () => {
     );
   };
 
+  const handleApprove = async (entityId: string) => {
+    try {
+      const response = await fetch(
+        `https://backend-5n7t.onrender.com/api/entity/approve/${entityId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ comments: approvalComment }), // send comment here
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Approval failed. Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Entity approved successfully:", result);
+      // alert("Entity approved successfully!");
+      notify("Entity approved successfully!", "success");
+
+      // Optionally update UI or clear comment:
+      setApprovalComment("");
+    } catch (error) {
+      console.error("Error approving entity:", error);
+      // alert("Failed to approve entity.");
+      notify("Failed to approve entity. Please try again.", "error");
+    }
+  };
+
+  const handleRejectBulk = async (entityIds: string[], comments: string) => {
+    try {
+      const response = await fetch(
+        "https://backend-5n7t.onrender.com/api/entity/reject-bulk",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ entityIds, comments }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Reject failed. Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      // console.log("Entities rejected successfully:", result);
+      // alert("Entities rejected successfully!");
+      notify("Entities rejected successfully!", "success");
+
+    } catch (error) {
+      // console.error("Error rejecting entities:", error);
+      notify("Failed to reject entities. Please try again.", "error");
+    }
+  };
+
+  const handleDelete = async (node: TreeNodeType) => {
+    if (!window.confirm(`Delete ${node.name} and all its children?`)) return;
+
+    try {
+      const response = await fetch(
+        `https://backend-5n7t.onrender.com/api/entity/delete/${node.data.entity_id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ comments: approvalComment }), // send comment here
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Delete failed. Status: ${response.status}`);
+      }
+
+      setTreeData((prev) => deleteNode(node.id, prev));
+
+      if (selectedNode?.id === node.id) {
+        setSelectedNode(null);
+      }
+
+      // alert(`Deleted ${node.name} successfully.`);
+      notify(`Deleted ${node.name} successfully.`, "success");
+    } catch (error) {
+      // console.error("Error deleting entity:", error);
+      notify(`Failed to delete ${node.name}. Please try again.`, "error");
+    }
+  };
+
   // TreeNode component
   const TreeNode = ({
     node,
@@ -789,17 +987,27 @@ const HierarchicalTree = () => {
                   </span>
                 </div>
 
-                <button
+                {/* <button
                   onClick={(e) => {
                     e.stopPropagation();
-                     console.log(`View ${node.name}`);
+                    console.log(`View ${node.name}`);
                   }}
                   className="p-1 rounded hover:bg-gray-100 text-gray-600 hover:text-gray-800"
                 >
                   <Edit className="text-primary" size={16} />
-                </button>
+                </button> */}
 
                 <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(node);
+                  }}
+                  className="p-1 rounded hover:bg-gray-100 text-gray-600 hover:text-gray-800"
+                >
+                  <Trash2 className="text-red-500" size={16} />
+                </button>
+
+                {/* <button
                   onClick={(e) => {
                     e.stopPropagation();
                     if (
@@ -816,7 +1024,7 @@ const HierarchicalTree = () => {
                   className="p-1 rounded hover:bg-gray-100 text-gray-600 hover:text-gray-800"
                 >
                   <Trash2 className="text-red-500" size={16} />
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
@@ -833,127 +1041,129 @@ const HierarchicalTree = () => {
     );
   };
 
+  function updateNodeDataInTree(tree, nodeId, updatedData) {
+    return tree.map((node) => {
+      if (node.data.entity_id === nodeId) {
+        return { ...node, data: { ...updatedData } };
+      } else if (node.children) {
+        return {
+          ...node,
+          children: updateNodeDataInTree(node.children, nodeId, updatedData),
+        };
+      }
+      return node;
+    });
+  }
+
   return (
     <Layout title="Entity Hierarchy" showButton buttonText="Entity Creation">
-      <div className="p-6 bg-gray-50 min-h-screen">
-        <div className="w-full">
-          <div className="flex space-x-4 w-full">
-            {/* Left panel (tree view) */}
-            <div className="bg-white w-full mt-6 rounded-lg border border-gray-200 p-6">
-              <div className="flex flex-col space-y-2">
-                {/* <label className="text-sm font-medium text-black">
-                  Select Company
-                </label> */}
-                {/* <select className="text-black bg-white px-3 py-2 border border-border rounded-lg shadow-sm focus:outline-none">
-                  <option value="globalcorp">GlobalCorp</option>
-                </select> */}
-              </div>
-              <div className="flex justify-between items-center mt-6 border-b mb-8 pb-2">
-                <h2 className="text-xl font-semibold">Hierarchy Tree</h2>
-                <div className="flex items-center gap-2">
-                  {/* <button
-                    className="p-1 rounded hover:bg-white/50 transition-colors text-red-600 hover:text-red-800"
-                    aria-label="Delete"
-                    onClick={() => {
-                      if (window.confirm("Delete entire hierarchy?")) {
-                        setTreeData(null);
-                        setSelectedNode(null);
-                      }
-                    }}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button> */}
-                  <button
-                    onClick={toggleAllNodes}
-                    className="px-2 py-1 text-[12px] bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                  >
-                    {isAllExpanded ? "Collapse All" : "Expand All"}
-                  </button>
+      {loading ? (
+        <div className="flex justify-center items-center h-[60vh]">
+          {/* <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-opacity-75"></div> */}
+          <LoadingSpinner />
+        </div>
+      ) : (
+        <div className="p-6 bg-gray-50 min-h-screen">
+          <div className="w-full">
+            <div className="flex space-x-4 w-full">
+              {/* Left panel (tree view) */}
+              <div className="bg-white w-full mt-6 rounded-lg border border-gray-200 p-6">
+                <div className="flex justify-between items-center mt-6 border-b mb-8 pb-2">
+                  <h2 className="text-xl font-semibold">Hierarchy Tree</h2>
+                  <div className="flex items-center gap-2 w-[7rem]">
+                    <Button categories="Medium"
+                      onClick={toggleAllNodes}
+                      // className="px-2 py-1 text-[12px] bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    >
+                      {isAllExpanded ? "Collapse All" : "Expand All"}
+                    </Button>
+                  </div>
                 </div>
+                {Array.isArray(treeData) ? (
+                  treeData.map((node) => <TreeNode key={node.id} node={node} />)
+                ) : treeData ? (
+                  <TreeNode node={treeData} />
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    No hierarchy data available. Create a new one.
+                  </div>
+                )}
               </div>
-              {Array.isArray(treeData) ? (
-                treeData.map((node) => <TreeNode key={node.id} node={node} />)
-              ) : treeData ? (
-                <TreeNode node={treeData} />
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  No hierarchy data available. Create a new one.
-                </div>
-              )}
-            </div>
 
-            {/* Right panel (details and actions) */}
-            <div className="flex flex-col bg-white mt-6 w-full space-y-10 rounded-lg border border-gray-200 p-6">
-              {selectedNode ? (
-                <>
-                  <div className="bg-white mt-6 w-full rounded-lg border border-gray-200 p-6">
-                    {selectedNode && (
+              {/* Right panel (details and actions) */}
+              <div className="flex flex-col bg-white mt-6 w-full space-y-10 rounded-lg border border-gray-200 p-6">
+                {selectedNode ? (
+                  <>
+                    <div className="bg-white mt-6 w-full rounded-lg border border-gray-200 p-6">
                       <h3 className="font-semibold text-gray-700">
-                        Current Node : {""} {selectedNode.id}
+                        Current Node: {selectedNode.id}
                       </h3>
-                    )}
-                    <div className="flex justify-end gap-2 ml-10 mt-4">
-                      <button
-                        onClick={() =>
-                          updateApprovalStatus(selectedNode.id, "approved")
-                        }
-                        className="bg-primary hover:bg-primary-hover text-center text-white rounded px-4 py-2 font-bold transition min-w-[4rem]"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() =>
-                          updateApprovalStatus(selectedNode.id, "rejected")
-                        }
-                        className="bg-primary hover:bg-primary-hover text-center text-white rounded px-4 py-2 font-bold transition min-w-[4rem]"
-                      >
-                        Reject
-                      </button>
-                      {/* <button className="bg-primary hover:bg-primary-hover text-center text-white rounded px-4 py-2 font-bold transition min-w-[4rem]">
-                        Save Draft
-                      </button> */}
-                    </div>
-                    <div className="mb-3">
-                      <label className="block font-semibold mb-1">
-                        Description <span className="text-red-500">*</span>
-                      </label>
-                      <textarea
-                        name="description"
-                        className="w-full text-black bg-white px-3 py-2 border border-border rounded-lg shadow-sm focus:outline-none"
-                      />
-                    </div>
-                    <div className="flex justify-between items-center mt-4">
-                      <div>
-                        {selectedNode && (
+                      <div className="flex justify-end gap-2 ml-10 mt-4">
+                        <button
+                          onClick={() => {
+                            updateApprovalStatus(selectedNode.id, "approved");
+                            handleApprove(selectedNode.data.entity_id);
+                          }}
+                          className="bg-primary hover:bg-primary-hover text-center text-white rounded px-4 py-2 font-bold transition min-w-[4rem]"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => {
+                            updateApprovalStatus(selectedNode.id, "rejected");
+                            handleRejectBulk(
+                              [selectedNode.data.entity_id],
+                              approvalComment
+                            );
+                          }}
+                          className="bg-primary hover:bg-primary-hover text-center text-white rounded px-4 py-2 font-bold transition min-w-[4rem]"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                      <div className="mb-3">
+                        <label className="block font-semibold mb-1">
+                          Description <span className="text-red-500">*</span>
+                        </label>
+
+                        <textarea
+                          name="description"
+                          value={approvalComment}
+                          onChange={(e) => setApprovalComment(e.target.value)}
+                          className="w-full text-black bg-white px-3 py-2 border border-border rounded-lg shadow-sm focus:outline-none"
+                        />
+                      </div>
+                      <div className="flex justify-between items-center mt-4">
+                        <div>
                           <p className="text-sm text-gray-600">
                             Parent: {selectedNode.data.parentname || "None"}
                           </p>
-                        )}
-                      </div>
-                      <div className="flex gap-2">
-                        {/* <button
-                          onClick={approveAllNodes}
-                          className="bg-primary hover:bg-primary-hover text-white rounded px-4 py-2 font-bold transition min-w-[4rem]"
-                        >
-                          Approve Entity Structure
-                        </button>
-                        <button className="bg-primary hover:bg-primary-hover text-white rounded px-4 py-2 font-bold transition min-w-[4rem]">
-                          Save Progress
-                        </button> */}
+                        </div>
                       </div>
                     </div>
+                    <TreeNodeDetails
+                      node={selectedNode}
+                      onUpdateNode={(updatedData) => {
+                        setTreeData((prevTree) =>
+                          updateNodeDataInTree(
+                            prevTree,
+                            selectedNode.id,
+                            updatedData
+                          )
+                        );
+                      }}
+                    />
+                  </>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    Select a node to view details
                   </div>
-                  <TreeNodeDetails node={selectedNode} />
-                </>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  Select a node to view details
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </Layout>
   );
 };
